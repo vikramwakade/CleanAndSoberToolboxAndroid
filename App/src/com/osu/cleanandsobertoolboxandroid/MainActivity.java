@@ -1,6 +1,6 @@
 package com.osu.cleanandsobertoolboxandroid;
 
-import com.example.cleanandsobertoolboxandroid.R;
+import com.osu.cleanandsobertoolboxandroid.R;
 
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
