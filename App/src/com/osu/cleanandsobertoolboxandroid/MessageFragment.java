@@ -1,9 +1,8 @@
 package com.osu.cleanandsobertoolboxandroid;
 
-import com.osu.cleanandsobertoolboxandroid.R;
-
-import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.text.method.ScrollingMovementMethod;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,6 +29,7 @@ public class MessageFragment extends Fragment {
             cCurrentPosition = savedInstanceState.getInt(C_POSITION);
         }
 
+        
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.message_view, container, false);
     }
@@ -54,6 +54,7 @@ public class MessageFragment extends Fragment {
 
     public void updateArticleView(int tPosition, int scPosition, int cPosition) {
         TextView article = (TextView) getActivity().findViewById(R.id.message);
+        article.setMovementMethod(new ScrollingMovementMethod());
         article.setText(Data.Articles[cPosition][scPosition][tPosition]);
         tCurrentPosition = tPosition;
         scCurrentPosition = scPosition;

@@ -59,6 +59,11 @@ public class Data {
     	}
     };
     
+    static String[] NavigationMessage = {
+		"Disclaimer",
+		"Pyschology",
+		"Are you really addicted"
+	};
     /*public static void main(String args[]) {
     	System.out.println(Data.SubCategories[1][1]);
     }*/
