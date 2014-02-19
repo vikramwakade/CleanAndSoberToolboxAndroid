@@ -3,14 +3,14 @@
 
     <string name="app_name">CleanAndSoberToolboxAndroid</string>
     <string name="action_settings">Settings</string>
-    <string name="hello_world">Hello world!</string>
+
 
     <string-array name="planets_array">
         <item>Days Sober </item>
         <item>Disclaimer</item>
         <item>Donate</item>
-        <item>Pyschology</item>
-        <item>Settings</item>
+        <item>Psychology</item>
+        <item>Notifications</item>
     </string-array>
 
     <string name="drawer_open">Open navigation drawer</string>
@@ -18,5 +18,8 @@
     <string name="action_websearch">Web search</string>
     <string name="title_activity_paypal_donation">PaypalDonation</string>
     <string name="buy">Buy a thing</string>
+    <string name="push_notifications">Would you like to receive push notifications?</string>
+    <string name="enter_email">Your email address:</string>
+    <string name ="weekly_email">Would you like to receive weekly emails?</string>
 
 </resources>
