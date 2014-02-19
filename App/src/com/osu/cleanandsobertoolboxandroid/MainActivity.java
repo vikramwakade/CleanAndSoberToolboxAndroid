@@ -98,7 +98,7 @@ public class MainActivity extends FragmentActivity
         return super.onCreateOptionsMenu(menu);
     }
 
-    /* The click listner for ListView in the navigation drawer */
+    /* The click listener for ListView in the navigation drawer */
     private class DrawerItemClickListener implements ListView.OnItemClickListener {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -126,11 +126,26 @@ public class MainActivity extends FragmentActivity
 	    	default:
 	    		break;
 	    	}
-	    	
+	    		
 	    	frag.setArguments(args);
 	        
 	        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 	
+	        // Replace whatever is in the fragment_container view with this fragment,
+	        // and add the transaction to the back stack so the user can navigate back
+	        transaction.replace(R.id.content_frame, frag);
+	        transaction.addToBackStack(null);
+	
+	        // Commit the transaction
+	        transaction.commit();
+    	}
+    	else if(position == NotificationsFragment.POSITION)
+    	{
+    		NotificationsFragment frag = new NotificationsFragment();
+    		
+    		
+    		FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+    		
 	        // Replace whatever is in the fragment_container view with this fragment,
 	        // and add the transaction to the back stack so the user can navigate back
 	        transaction.replace(R.id.content_frame, frag);

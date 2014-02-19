@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 public class NotificationsFragment extends Fragment {
 	int curPosition = -1;
+	final static int POSITION = 4;
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, 
