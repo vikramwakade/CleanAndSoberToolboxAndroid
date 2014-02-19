@@ -111,7 +111,7 @@ public class MainActivity extends FragmentActivity
         //TODO:
         //mDrawerLayout.closeDrawer(mDrawerList);
     	Log.i("Info", ""+position);
-    	if (position == NavigationMessageFragment.disclaimer || position == NavigationMessageFragment.pyschology) {
+    	if (position == NavigationMessageFragment.disclaimer || position == NavigationMessageFragment.psychology) {
 	    	NavigationMessageFragment frag = new NavigationMessageFragment();
 	    	Bundle args = new Bundle();
 	    	switch(position) {
@@ -120,7 +120,7 @@ public class MainActivity extends FragmentActivity
 	    	
 	    		args.putInt(NavigationMessageFragment.DISCLAIMER, 0);
 	    	break;
-	    	case NavigationMessageFragment.pyschology:
+	    	case NavigationMessageFragment.psychology:
 	    		args.putInt(NavigationMessageFragment.DISCLAIMER, 1);
 	    	break;
 	    	default:

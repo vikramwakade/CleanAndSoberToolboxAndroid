@@ -61,7 +61,7 @@ public class Data {
     
     static String[] NavigationMessage = {
 		"Disclaimer",
-		"Pyschology",
+		"Psychology",
 		"Are you really addicted"
 	};
     /*public static void main(String args[]) {

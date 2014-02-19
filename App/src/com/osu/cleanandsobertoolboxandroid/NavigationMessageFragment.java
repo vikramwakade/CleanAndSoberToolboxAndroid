@@ -10,7 +10,7 @@ import android.widget.TextView;
 
 public class NavigationMessageFragment extends Fragment{
 	final static int disclaimer = 1; //position
-	final static int pyschology = 3;
+	final static int psychology = 3;
 	final static String DISCLAIMER = "disclaimer";
 	int curPosition = -1;
 
