@@ -233,9 +233,9 @@ public class MainActivity extends FragmentActivity
 		
 		MessageFragment messageFragment = new MessageFragment();
 		Bundle args = new Bundle();
-		args.putInt(MessageFragment.C_POSITION, cPosition);
-		args.putInt(MessageFragment.SC_POSITION, scPosition);
-        args.putInt(MessageFragment.T_POSITION, tPosition);
+		args.putInt(MessageFragment.CATEGORY_POSITION, cPosition);
+		args.putInt(MessageFragment.SUBCATEGORY_POSITION, scPosition);
+        args.putInt(MessageFragment.TOPIC_POSITION, tPosition);
         messageFragment.setArguments(args);
         
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
