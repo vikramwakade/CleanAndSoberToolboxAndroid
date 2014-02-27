@@ -9,9 +9,9 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 public class MessageFragment extends Fragment {
-	final static String T_POSITION = "tPosition";
-	final static String SC_POSITION = "scPosition";
-	final static String C_POSITION = "cPosition";
+	final static String TOPIC_POSITION = "tPosition";
+	final static String SUBCATEGORY_POSITION = "scPosition";
+	final static String CATEGORY_POSITION = "cPosition";
     int tCurrentPosition = -1;
     int scCurrentPosition = -1;
     int cCurrentPosition = -1;
@@ -24,9 +24,9 @@ public class MessageFragment extends Fragment {
         // the previous article selection set by onSaveInstanceState().
         // This is primarily necessary when in the two-pane layout.
         if (savedInstanceState != null) {
-            tCurrentPosition = savedInstanceState.getInt(T_POSITION);
-            scCurrentPosition = savedInstanceState.getInt(SC_POSITION);
-            cCurrentPosition = savedInstanceState.getInt(C_POSITION);
+            tCurrentPosition = savedInstanceState.getInt(TOPIC_POSITION);
+            scCurrentPosition = savedInstanceState.getInt(SUBCATEGORY_POSITION);
+            cCurrentPosition = savedInstanceState.getInt(CATEGORY_POSITION);
         }
 
         
@@ -45,7 +45,7 @@ public class MessageFragment extends Fragment {
         Bundle args = getArguments();
         if (args != null) {
             // Set article based on argument passed in
-            updateArticleView(args.getInt(T_POSITION), args.getInt(SC_POSITION), args.getInt(C_POSITION));
+            updateArticleView(args.getInt(TOPIC_POSITION), args.getInt(SUBCATEGORY_POSITION), args.getInt(CATEGORY_POSITION));
         } else if (tCurrentPosition != -1 && scCurrentPosition != -1 && cCurrentPosition != -1) {
             // Set article based on saved instance state defined during onCreateView
             updateArticleView(tCurrentPosition, scCurrentPosition, cCurrentPosition);
@@ -66,8 +66,8 @@ public class MessageFragment extends Fragment {
         super.onSaveInstanceState(outState);
 
         // Save the current article selection in case we need to recreate the fragment
-        outState.putInt(T_POSITION, tCurrentPosition);
-        outState.putInt(SC_POSITION, scCurrentPosition);
-        outState.putInt(C_POSITION, cCurrentPosition);
+        outState.putInt(TOPIC_POSITION, tCurrentPosition);
+        outState.putInt(SUBCATEGORY_POSITION, scCurrentPosition);
+        outState.putInt(CATEGORY_POSITION, cCurrentPosition);
     }
 }
