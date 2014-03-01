@@ -28,6 +28,12 @@ public class MainActivity extends FragmentActivity
     private CharSequence mDrawerTitle;
     private CharSequence mTitle;
     
+    /** The view to show the ad. */
+    //private AdView adView;
+ 
+    /* Your ad unit id. Replace with your actual ad unit id. */
+    //private static final String AD_UNIT_ID = "INSERT_YOUR_AD_UNIT_ID_HERE";
+    
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -37,7 +43,7 @@ public class MainActivity extends FragmentActivity
 		//Log.i("INFO",mPlanetTitles[0]);
 		// Creating an ArrayAdapter to add items to the listview mDrawerList
 		ArrayAdapter<String> adapter = new ArrayAdapter<String>(getBaseContext(), 
-		        R.layout.drawer_list_item, getResources().getStringArray(R.array.planets_array));
+		        R.layout.drawer_list_item, getResources().getStringArray(R.array.drawer_array));
 		
 		
 		mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -72,6 +78,18 @@ public class MainActivity extends FragmentActivity
         };
        
         mDrawerLayout.setDrawerListener(mDrawerToggle);
+        
+        // Code to create the database when run for the first time
+        // and then populate the tables with data read from json file
+        if (!MessageDataSource.databaseExist(this, MessageReaderDbHelper.DATABASE_NAME))
+        {
+	        MessageDataSource ds = new MessageDataSource(this);
+	        ds.open();
+	        ds.EmptyDb();
+	        String result = ds.ProcessJSONFile(R.raw.finalized_json);
+	        ds.PopulateDbFromJSON(result);
+	        ds.close();
+        }
         
 		CategoryFragment firstFragment = new CategoryFragment();
 
@@ -190,13 +208,13 @@ public class MainActivity extends FragmentActivity
     }
     
     @Override
-	public void onCategorySelected(int cPosition) {
+	public void onCategorySelected(int categoryId) {
 		// TODO Auto-generated method stub
 		
 		SubCategoryFragment secondFragment = new SubCategoryFragment();
 		//secondFragment.setArguments(getIntent().getExtras());
 		Bundle args = new Bundle();
-        args.putInt(SubCategoryFragment.CATEGORY_POSITION, cPosition);
+        args.putInt(SubCategoryFragment.CATEGORY_ID, categoryId);
         secondFragment.setArguments(args);
 		
 		FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
@@ -208,14 +226,14 @@ public class MainActivity extends FragmentActivity
 	}
 
 	@Override
-	public void onSubCategorySelected(int cPosition, int scPosition) {
+	public void onSubCategorySelected(int categoryId, int subCategoryId) {
 		// TODO Auto-generated method stub
 		
 		TopicsFragment thirdFragment = new TopicsFragment();
 		//thirdFragment.setArguments(getIntent().getExtras());
 		Bundle args = new Bundle();
-        args.putInt(TopicsFragment.CATEGORY_POSITION, cPosition);
-        args.putInt(TopicsFragment.SUBCATEGORY_POSITION, scPosition);
+        args.putInt(TopicsFragment.CATEGORY_ID, categoryId);
+        args.putInt(TopicsFragment.SUBCATEGORY_ID, subCategoryId);
         
         thirdFragment.setArguments(args);
 		
@@ -228,14 +246,12 @@ public class MainActivity extends FragmentActivity
 	}
 
 	@Override
-	public void onTopicSelected(int cPosition, int scPosition, int tPosition) {
+	public void onTopicSelected(int position) {
 		// TODO Auto-generated method stub
 		
 		MessageFragment messageFragment = new MessageFragment();
 		Bundle args = new Bundle();
-		args.putInt(MessageFragment.CATEGORY_POSITION, cPosition);
-		args.putInt(MessageFragment.SUBCATEGORY_POSITION, scPosition);
-        args.putInt(MessageFragment.TOPIC_POSITION, tPosition);
+        args.putInt(MessageFragment.CONTENT_POSITION, position);
         messageFragment.setArguments(args);
         
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();

@@ -1,5 +1,7 @@
 package com.osu.cleanandsobertoolboxandroid;
 
+import java.util.List;
+
 import android.app.Activity;
 import android.os.Build;
 import android.os.Bundle;
@@ -9,13 +11,14 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 public class SubCategoryFragment extends ListFragment {
-	final static String CATEGORY_POSITION = "cPosition";
-	int cCurrentPosition = -1;
+	final static String CATEGORY_ID = "categoryId";
+	int currentCategoryId = -1;
+	MessageDataSource ds;
 	
 	OnSubCategorySelectedListener mCallback;
 
 	public interface OnSubCategorySelectedListener {
-		public void onSubCategorySelected(int cPosition, int scPosition);
+		public void onSubCategorySelected(int categoryId, int scPosition);
 	}
 	
 	@Override
@@ -32,16 +35,19 @@ public class SubCategoryFragment extends ListFragment {
         // We need to use a different list item layout for devices older than Honeycomb
         int layout = Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB ?
                 android.R.layout.simple_list_item_activated_1 : android.R.layout.simple_list_item_1;
-
-        // Create an array adapter for the list view, using the Ipsum headlines array
+        
+        ds = new MessageDataSource(getActivity());
+        ds.open();
+        
         Bundle args = getArguments();
-        cCurrentPosition = args.getInt(CATEGORY_POSITION);
-        setListAdapter(new ArrayAdapter<String>(getActivity(), layout, Data.SubCategories[cCurrentPosition]));
+        currentCategoryId = args.getInt(CATEGORY_ID);
+        List<String> subCategories = ds.getSubCategories(getActivity(), currentCategoryId);
+        // Create an array adapter for the list view, using the Ipsum headlines array
+        setListAdapter(new ArrayAdapter<String>(getActivity(), layout, subCategories));
     }
 
 	@Override
 	public void onAttach(Activity activity) {
-		// TODO Auto-generated method stub
 		super.onAttach(activity);
 		
 		mCallback = (OnSubCategorySelectedListener) activity;
@@ -56,10 +62,15 @@ public class SubCategoryFragment extends ListFragment {
 
 	@Override
 	public void onListItemClick(ListView l, View v, int position, long id) {
-		// TODO Auto-generated method stub
 		super.onListItemClick(l, v, position, id);
 		
-		mCallback.onSubCategorySelected(cCurrentPosition, position);
+		String subCategory = (String) getListAdapter().getItem(position);
+		
+		int subCategoryId = ds.getSubCategoryId(getActivity(), subCategory);
+		
+		// currentCategoryId is not being used for now, but may need some 
+		// consideration in future
+		mCallback.onSubCategorySelected(currentCategoryId, subCategoryId);
 	}
 
 }
