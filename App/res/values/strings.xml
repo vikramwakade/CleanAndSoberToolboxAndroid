@@ -5,13 +5,12 @@
     <string name="action_settings">Settings</string>
 
 
-    <string-array name="planets_array">
-        <item>Days Sober </item>
-        <item>Disclaimer</item>
-        <item>Donate</item>
-        <item>Psychology</item>
-        <item>Notifications</item>
-    </string-array>
+    <string-array name="drawer_array"> 
+        <item>Disclaimer</item> 
+        <item>Donate</item> 
+        <item>Pyschology</item> 
+        <item>Settings</item> 
+    </string-array> 
 
     <string name="drawer_open">Open navigation drawer</string>
     <string name="drawer_close">Close navigation drawer</string>
