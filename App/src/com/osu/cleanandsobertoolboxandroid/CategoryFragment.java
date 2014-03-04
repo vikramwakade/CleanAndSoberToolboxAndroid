@@ -31,13 +31,13 @@ public class CategoryFragment extends ListFragment {
 
         // We need to use a different list item layout for devices older than Honeycomb
         int layout = Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB ?
-                android.R.layout.simple_list_item_activated_1 : android.R.layout.simple_list_item_1;
+                android.R.layout.activity_list_item : android.R.layout.activity_list_item;
         
         ds = new MessageDataSource(getActivity());
         ds.open();
         List<String> categories = ds.getAllCategories(getActivity());
         // Create an array adapter for the list view, using the Ipsum headlines array
-        setListAdapter(new ArrayAdapter<String>(getActivity(), layout, categories));
+        setListAdapter(new ArrayAdapter<String>(getActivity(), R.layout.activity_list_layout, categories));
     }
 	
 	@Override

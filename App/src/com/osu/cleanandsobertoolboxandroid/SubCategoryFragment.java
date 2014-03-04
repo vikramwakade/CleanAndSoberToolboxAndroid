@@ -43,7 +43,7 @@ public class SubCategoryFragment extends ListFragment {
         currentCategoryId = args.getInt(CATEGORY_ID);
         List<String> subCategories = ds.getSubCategories(getActivity(), currentCategoryId);
         // Create an array adapter for the list view, using the Ipsum headlines array
-        setListAdapter(new ArrayAdapter<String>(getActivity(), layout, subCategories));
+        setListAdapter(new ArrayAdapter<String>(getActivity(), R.layout.activity_list_layout, subCategories));
     }
 
 	@Override
