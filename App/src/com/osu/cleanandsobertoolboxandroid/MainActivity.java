@@ -1,11 +1,13 @@
 package com.osu.cleanandsobertoolboxandroid;
 
+import android.content.Context;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
+import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -13,7 +15,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdSize;
+import com.google.android.gms.ads.AdView;
 
 public class MainActivity extends FragmentActivity 
 	implements TopicsFragment.OnTopicSelectedListener,
@@ -29,16 +36,40 @@ public class MainActivity extends FragmentActivity
     private CharSequence mTitle;
     
     /** The view to show the ad. */
-    //private AdView adView;
+    private AdView adView;
  
     /* Your ad unit id. Replace with your actual ad unit id. */
-    //private static final String AD_UNIT_ID = "INSERT_YOUR_AD_UNIT_ID_HERE";
+    private static final String AD_UNIT_ID = "INSERT_YOUR_AD_UNIT_ID_HERE";
     
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.all_categories);
-		
+
+		 // Create an ad.
+	    adView = new AdView(this);
+	    adView.setAdSize(AdSize.BANNER);
+	    adView.setAdUnitId("0445b7141d9d4e1b");
+	    
+	 // Add the AdView to the view hierarchy. The view will have no size
+	    // until the ad is loaded.
+	    LinearLayout layout = (LinearLayout) findViewById(R.id.linearlayout);
+	    layout.addView(adView);
+	    
+	    final TelephonyManager tm =(TelephonyManager)getBaseContext().getSystemService(Context.TELEPHONY_SERVICE);
+
+	    String deviceid = tm.getDeviceId();
+	    
+	 // Create an ad request. Check logcat output for the hashed device ID to
+	    // get test ads on a physical device.
+	    AdRequest adRequest = new AdRequest.Builder()
+	        .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
+	        .addTestDevice(deviceid)
+	        .build();
+
+	    // Start loading the ad in the background.
+	    adView.loadAd(adRequest);
+	    
 		mTitle = mDrawerTitle = getTitle();
 		//Log.i("INFO",mPlanetTitles[0]);
 		// Creating an ArrayAdapter to add items to the listview mDrawerList
@@ -49,8 +80,6 @@ public class MainActivity extends FragmentActivity
 		mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 		mDrawerList = (ListView) findViewById(R.id.drawer_list);
 		
-		//mDrawerList.setAdapter(new ArrayAdapter<String>(this,
-        //        R.layout.drawer_list_item, mPlanetTitles));
 		mDrawerList.setAdapter(adapter);
 		// Set the list's click listener
         mDrawerList.setOnItemClickListener(new DrawerItemClickListener());		
@@ -72,7 +101,7 @@ public class MainActivity extends FragmentActivity
             }
 
             public void onDrawerOpened(View drawerView) {
-                getActionBar().setTitle(mDrawerTitle);
+                getActionBar().setTitle("Days Sober 20");//(mDrawerTitle);
                 invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
             }
         };
@@ -102,6 +131,33 @@ public class MainActivity extends FragmentActivity
                 .add(R.id.content_frame, firstFragment).commit();
 	}
 
+	 @Override
+	  public void onResume() {
+	    super.onResume();
+	    if (adView != null) {
+	      adView.resume();
+	    }
+	  }
+
+	  @Override
+	  public void onPause() {
+	    if (adView != null) {
+	      adView.pause();
+	    }
+	    super.onPause();
+	  }
+
+
+	  /** Called before the activity is destroyed. */
+	  @Override
+	  public void onDestroy() {
+	    // Destroy the AdView.
+	    if (adView != null) {
+	      adView.destroy();
+	    }
+	    super.onDestroy();
+	  }
+	  
 	/* Called whenever we call invalidateOptionsMenu() */
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
