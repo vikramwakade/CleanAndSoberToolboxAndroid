@@ -43,7 +43,7 @@ public class TopicsFragment extends ListFragment {
         	titles.add(c.getTitle());
         }
         
-        setListAdapter(new ArrayAdapter<String>(getActivity(), layout, titles));
+        setListAdapter(new ArrayAdapter<String>(getActivity(), R.layout.activity_list_layout, titles));
     }
 
 	@Override
