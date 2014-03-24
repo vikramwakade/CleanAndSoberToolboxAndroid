@@ -15,45 +15,26 @@ public class MessageReaderDbHelper extends SQLiteOpenHelper {
     private static final String TEXT_TYPE = " TEXT";
     private static final String COMMA_SEP = ",";
     
-    private static final String SQL_CREATE_CATEGORIES =
-        "CREATE TABLE " + CategoryEntry.TABLE_NAME + " (" +
-        CategoryEntry._ID + " INTEGER PRIMARY KEY," +
-        CategoryEntry.COLUMN_NAME_ENTRY_ID + INTEGER_TYPE + COMMA_SEP +
-        CategoryEntry.COLUMN_NAME_TITLE + TEXT_TYPE +
-        " )";
-    
-    private static final String SQL_CREATE_SUBCATEGORIES =
-        "CREATE TABLE " + SubCategoryEntry.TABLE_NAME + " (" +
-        SubCategoryEntry._ID + " INTEGER PRIMARY KEY," +
-        SubCategoryEntry.COLUMN_NAME_ENTRY_ID + INTEGER_TYPE + COMMA_SEP +
-        SubCategoryEntry.COLUMN_NAME_TITLE + TEXT_TYPE + COMMA_SEP +
-        SubCategoryEntry.COLUMN_NAME_CATEGORY_ID + INTEGER_TYPE + 
-        " )";
-    
-    private static final String SQL_CREATE_CONTENTS = 
-		"CREATE TABLE " + ContentEntry.TABLE_NAME + " (" +
-		ContentEntry._ID + " INTEGER PRIMARY KEY," +
-		ContentEntry.COLUMN_NAME_ENTRY_ID + INTEGER_TYPE + COMMA_SEP +
-	    ContentEntry.COLUMN_NAME_SUBCATEGORY_ID + INTEGER_TYPE + 
-	    " )";
+    private static final String SQL_CREATE_STRUCTURE = 
+		"CREATE TABLE " + StructureEntry.TABLE_NAME + " (" +
+			StructureEntry._ID + " INTEGER PRIMARY KEY," +
+			StructureEntry.COLUMN_NAME_ENTRY_ID + INTEGER_TYPE + COMMA_SEP +
+			StructureEntry.COLUMN_NAME_PARENT_ID + INTEGER_TYPE + COMMA_SEP +
+	        StructureEntry.COLUMN_NAME_TYPE + TEXT_TYPE + COMMA_SEP +
+	        StructureEntry.COLUMN_NAME_TITLE + TEXT_TYPE +
+	        " )";
     
     private static final String SQL_CREATE_MESSAGES = 
     	"CREATE TABLE " + MessageEntry.TABLE_NAME + " (" +
-    	MessageEntry._ID + " INTEGER PRIMARY KEY," +
-    	MessageEntry.COLUMN_NAME_ENTRY_ID + INTEGER_TYPE + COMMA_SEP +
-    	MessageEntry.COLUMN_NAME_TITLE + TEXT_TYPE + COMMA_SEP +
-    	MessageEntry.COLUMN_NAME_MESSAGE + TEXT_TYPE + COMMA_SEP +
-    	MessageEntry.COLUMN_NAME_TODO + TEXT_TYPE + 
-    	" )";
+	    	MessageEntry._ID + " INTEGER PRIMARY KEY," +
+	    	MessageEntry.COLUMN_NAME_ENTRY_ID + INTEGER_TYPE + COMMA_SEP +
+	    	MessageEntry.COLUMN_NAME_TITLE + TEXT_TYPE + COMMA_SEP +
+	    	MessageEntry.COLUMN_NAME_MESSAGE + TEXT_TYPE + COMMA_SEP +
+	    	MessageEntry.COLUMN_NAME_TODO + TEXT_TYPE + 
+	    	" )";
     
-    private static final String SQL_DELETE_CATEGORIES = 
-    		"DROP TABLE IF EXISTS " + CategoryEntry.TABLE_NAME;
-    
-    private static final String SQL_DELETE_SUBCATEGORIES =
-    		"DROP TABLE IF EXISTS " + SubCategoryEntry.TABLE_NAME;
-    
-    private static final String SQL_DELETE_CONTENTS = 
-    		"DROP TABLE IF EXISTS " + ContentEntry.TABLE_NAME;
+    private static final String SQL_DELETE_STRUCTURE =
+    		"DROP TABLE IF EXISTS " + StructureEntry.TABLE_NAME;
     
     private static final String SQL_DELETE_MESSAGES =
     		"DROP TABLE IF EXISTS " + MessageEntry.TABLE_NAME;
@@ -65,17 +46,13 @@ public class MessageReaderDbHelper extends SQLiteOpenHelper {
     
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL(SQL_CREATE_CATEGORIES);
-        db.execSQL(SQL_CREATE_SUBCATEGORIES);
-        db.execSQL(SQL_CREATE_CONTENTS);
+    	db.execSQL(SQL_CREATE_STRUCTURE);
         db.execSQL(SQL_CREATE_MESSAGES);
     }
 
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-		db.execSQL(SQL_DELETE_CATEGORIES);
-		db.execSQL(SQL_DELETE_SUBCATEGORIES);
-    	db.execSQL(SQL_DELETE_CONTENTS);
+		db.execSQL(SQL_DELETE_STRUCTURE);
     	db.execSQL(SQL_DELETE_MESSAGES);
     	onCreate(db);
 	}

@@ -69,6 +69,18 @@ public class MessageDataSource {
 	    	JSONObject jObject = new JSONObject(result);
 	    	
 		    JSONArray messages = jObject.getJSONArray("messages");
+		    JSONObject structure = jObject.getJSONObject("structure");
+		    JSONArray categories = structure.getJSONArray("list");
+		    
+		    InsertMessages(messages);
+		    InsertStructureEntries(categories, -1);
+	    } catch (JSONException e) {
+			e.printStackTrace();
+		}
+	}
+	    
+	public void InsertMessages(JSONArray messages) {
+		try {    
 		    for (int i = 0; i < messages.length(); i++)
 		    {
 		    	ContentValues values = new ContentValues();
@@ -88,65 +100,51 @@ public class MessageDataSource {
 			    		null,
 			    		values);
 		    }
-		    
-		    JSONObject structure = jObject.getJSONObject("structure");
-		    JSONArray categories = structure.getJSONArray("list");
-		    System.out.println("Total categories = " + categories.length());
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void InsertStructureEntries(JSONArray categories, int parent) {
+		try {
 		    for(int i = 0; i < categories.length(); i++)
 		    {
 		    	ContentValues values = new ContentValues();
 		    	JSONObject category = categories.getJSONObject(i);
-		    	values.put(CategoryEntry.COLUMN_NAME_ENTRY_ID,
-		    			category.getInt("identifier"));
-		    	values.put(CategoryEntry.COLUMN_NAME_TITLE,
-		    			category.getString("title"));
 		    	
-		    	database.insert(CategoryEntry.TABLE_NAME, null, values);
+		    	int id = category.getInt("identifier");
+		    	values.put(StructureEntry.COLUMN_NAME_ENTRY_ID,
+		    			id);
+		    	values.put(StructureEntry.COLUMN_NAME_PARENT_ID,
+		    			parent);
+		    	String type = category.getString("type");
+		    	values.put(StructureEntry.COLUMN_NAME_TYPE, type);
+		    	if(type.equals("category")) {
+			    	values.put(StructureEntry.COLUMN_NAME_TITLE,
+			    			category.getString("title"));
+		    	} else {
+		    		values.putNull(StructureEntry.COLUMN_NAME_TITLE);
+		    	}
 		    	
-		    	JSONArray subcategories = category.getJSONArray("list");
-		    	for(int j = 0; j < subcategories.length(); j++)
-		    	{
-		    		values = new ContentValues();
-		    		JSONObject subcategory = subcategories.getJSONObject(j);
-		    		values.put(SubCategoryEntry.COLUMN_NAME_CATEGORY_ID,
-		    				category.getInt("identifier"));
-		    		values.put(SubCategoryEntry.COLUMN_NAME_ENTRY_ID,
-		    				subcategory.getInt("identifier"));
-		    		values.put(SubCategoryEntry.COLUMN_NAME_TITLE,
-		    				subcategory.getString("title"));
-		    		
-		    		database.insert(SubCategoryEntry.TABLE_NAME, null, values);
-		    		
-		    		JSONArray contents = subcategory.getJSONArray("list");
-		    		for(int k = 0; k < contents.length(); k++)
-		    		{
-		    			values = new ContentValues();
-		    			JSONObject content = contents.getJSONObject(k);
-		    			values.put(ContentEntry.COLUMN_NAME_SUBCATEGORY_ID,
-		    					subcategory.getInt("identifier"));
-		    			values.put(ContentEntry.COLUMN_NAME_ENTRY_ID,
-		    					content.getInt("identifier"));
-		    			
-		    			database.insert(ContentEntry.TABLE_NAME, null, values);
-		    		}
+		    	database.insert(StructureEntry.TABLE_NAME, null, values);
+		    	
+		    	// Recursively call InstertStructureEntries to insert the
+		    	// sub-categories within the current category
+		    	if(type.equals("category")) {
+		    		InsertStructureEntries(category.getJSONArray("list"), id);
 		    	}
 		    }
 		} catch (JSONException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 	
 	// Empty the entire database
 	public void EmptyDb() {
-		String deleteCategories = "DELETE FROM " + CategoryEntry.TABLE_NAME;
-		String deleteSubCategories = "DELETE FROM " + SubCategoryEntry.TABLE_NAME;
-		String deleteContents = "DELETE FROM " + ContentEntry.TABLE_NAME;
+		String deleteStructure = "DELETE FROM " + StructureEntry.TABLE_NAME;
 		String deleteMessages = "DELETE FROM " + MessageEntry.TABLE_NAME;
 		
-		database.execSQL(deleteCategories);
-		database.execSQL(deleteSubCategories);
-		database.execSQL(deleteContents);
+		database.execSQL(deleteStructure);
 		database.execSQL(deleteMessages);
 	}
 	
@@ -155,137 +153,71 @@ public class MessageDataSource {
 	    return dbFile.exists();
 	}
 	
-	// Get all the top level category names
-	public List<String> getAllCategories(Context context) {
-		List<String> categories = new ArrayList<String>();
-
-		// Define a projection that specifies which columns from the database
-		// you will actually use after this query.
+	public List<Category> getAllChildren(Context context, int parentId) {
+		List<Category> categories = new ArrayList<Category>();
+		
 		String[] projection = {
-				CategoryEntry.COLUMN_NAME_TITLE
-				};
-        
-		Cursor c = database.query( CategoryEntry.TABLE_NAME, projection,
-				null, null, null, null, null );
-		 
+				StructureEntry.COLUMN_NAME_ENTRY_ID,
+				StructureEntry.COLUMN_NAME_TITLE,
+				StructureEntry.COLUMN_NAME_TYPE
+		};
+		
+		String selection = StructureEntry.COLUMN_NAME_PARENT_ID + "=?";
+		String[] selectionArgs = {
+				Integer.toString(parentId)
+		};
+		
+		Cursor c = database.query( StructureEntry.TABLE_NAME, projection,
+				selection, selectionArgs, null, null, null );
+		
 		if (c.moveToFirst()) {
 			do {
-				categories.add(c.getString(0));
+				String type = c.getString(2);
+				if (type.equals("category")) {
+					categories.add(new Category(c.getInt(0), c.getString(1), type));
+				} else if (type.equals("content")) {
+					// Get the content title from "messages" table
+					String[] mprojection = {
+							MessageEntry.COLUMN_NAME_TITLE
+					};
+					String mselection = MessageEntry.COLUMN_NAME_ENTRY_ID + "=?";
+					String[] mselectionArgs = {
+							Integer.toString(c.getInt(0))
+					};
+					
+					Cursor m_c = database.query( MessageEntry.TABLE_NAME, mprojection,
+							mselection, mselectionArgs, null, null, null );
+					
+					if (m_c.moveToFirst()) {
+						categories.add(new Category(c.getInt(0), m_c.getString(0), type));
+					}
+				}
 			} while(c.moveToNext());
 		}
-		 
+		
 		return categories;
 	}
 	
-	// Get the id of a particular category
-	public int getCategoryId(Context context, String category) {
-		String[] projection = {
-				CategoryEntry.COLUMN_NAME_ENTRY_ID
+	public String getMessage(Context context, int messageId) {
+		String message = "";
+		
+		String[] mprojection = {
+				MessageEntry.COLUMN_NAME_TITLE,
+				MessageEntry.COLUMN_NAME_MESSAGE,
+				MessageEntry.COLUMN_NAME_TODO
+		};
+		String mselection = MessageEntry.COLUMN_NAME_ENTRY_ID + "=?";
+		String[] mselectionArgs = {
+				Integer.toString(messageId)
 		};
 		
-		String selection = CategoryEntry.COLUMN_NAME_TITLE + "=?";
-		String[] selectionArgs = {
-				category
-		};
-		
-		Cursor c = database.query( CategoryEntry.TABLE_NAME, projection, 
-				selection, selectionArgs, null, null, null );
-		
-		c.moveToFirst();
-		
-		return c.getInt(0);
-	}
-	
-	// Get all the subcategories of a particular top level category
-	public List<String> getSubCategories(Context context, int categoryId) {
-		List<String> subCategories = new ArrayList<String>();
-		
-		String[] projection = {
-				SubCategoryEntry.COLUMN_NAME_TITLE
-		};
-		
-		String selection = SubCategoryEntry.COLUMN_NAME_CATEGORY_ID + "=?";
-		String[] selectionArgs = {
-				Integer.toString(categoryId)
-		};
-				
-		Cursor c = database.query( SubCategoryEntry.TABLE_NAME, projection, 
-				selection, selectionArgs, null, null, null );
+		Cursor c = database.query( MessageEntry.TABLE_NAME, mprojection,
+				mselection, mselectionArgs, null, null, null );
 		
 		if (c.moveToFirst()) {
-			do {
-				subCategories.add(c.getString(0));
-			} while(c.moveToNext());
+			message = c.getString(0) + "\n\n" + c.getString(1) + "\n\n" + c.getString(2);
 		}
 		
-		return subCategories;
-	}
-	
-	// Get the id of a particular sub category
-	public int getSubCategoryId(Context context, String subCategory) {
-		String[] projection = {
-				SubCategoryEntry.COLUMN_NAME_ENTRY_ID
-		};
-		
-		String selection = SubCategoryEntry.COLUMN_NAME_TITLE + "=?";
-		String[] selectionArgs = {
-				subCategory
-		};
-		
-		Cursor c = database.query( SubCategoryEntry.TABLE_NAME, projection,
-				selection, selectionArgs, null, null, null );
-		
-		c.moveToFirst();
-		
-		return c.getInt(0);
-	}
-	
-	// Get all the contents in a particular sub category by querying all the 
-	// contentIds in message table
-	public List<Content> getContents(Context context, int subCategoryId) {
-		List<Content> contents = new ArrayList<Content>();
-		
-		String[] projection = {
-				ContentEntry.COLUMN_NAME_ENTRY_ID
-		};
-		
-		String selection = ContentEntry.COLUMN_NAME_SUBCATEGORY_ID + "=?";
-		String[] selectionArgs = {
-				Integer.toString(subCategoryId)
-		};
-				
-		Cursor c = database.query( ContentEntry.TABLE_NAME, projection,
-				selection, selectionArgs, null, null, null );
-		
-		if (c.moveToFirst()) {
-			do {
-				String[] mprojection = {
-						MessageEntry.COLUMN_NAME_ENTRY_ID,
-						MessageEntry.COLUMN_NAME_TITLE,
-						MessageEntry.COLUMN_NAME_MESSAGE,
-						MessageEntry.COLUMN_NAME_TODO
-				};
-				String mselection = MessageEntry.COLUMN_NAME_ENTRY_ID + "=?";
-				String[] mselectionArgs = {
-						Integer.toString(c.getInt(0))
-				};
-				Cursor message_cursor = database.query( MessageEntry.TABLE_NAME, mprojection,
-						mselection, mselectionArgs, null, null, null );
-				
-				Content content = new Content();
-				
-				if (message_cursor.moveToFirst())
-				{	
-					content.setIdentifier(message_cursor.getInt(0));
-					content.setTitle(message_cursor.getString(1));
-					content.setMessage(message_cursor.getString(2));
-					content.setTodo(message_cursor.getString(3));
-				}
-				
-				contents.add(content);
-			} while(c.moveToNext());
-		}
-		
-		return contents;
+		return message;
 	}
 }

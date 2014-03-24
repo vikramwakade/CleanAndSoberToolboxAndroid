@@ -9,8 +9,10 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 public class MessageFragment extends Fragment {
-	final static String CONTENT_POSITION = "position";
-    int currentPosition = -1;
+	final static String CONTENT_ID = "contentId";
+	
+    int currentContentId = -1;
+    MessageDataSource ds;
     
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, 
@@ -20,7 +22,7 @@ public class MessageFragment extends Fragment {
         // the previous article selection set by onSaveInstanceState().
         // This is primarily necessary when in the two-pane layout.
         if (savedInstanceState != null) {
-            currentPosition = savedInstanceState.getInt(CONTENT_POSITION);
+        	currentContentId = savedInstanceState.getInt(CONTENT_ID);
         }
      
         // Inflate the layout for this fragment
@@ -38,21 +40,27 @@ public class MessageFragment extends Fragment {
         Bundle args = getArguments();
         if (args != null) {
             // Set article based on argument passed in
-            updateArticleView(args.getInt(CONTENT_POSITION));
-        } else if (currentPosition != -1) {
+            updateArticleView(args.getInt(CONTENT_ID));
+        } else if (currentContentId != -1) {
             // Set article based on saved instance state defined during onCreateView
-            updateArticleView(currentPosition);
+            updateArticleView(currentContentId);
         }
     }
 
     // TODO: Need some styling to display the content
-    public void updateArticleView(int position) {
+    public void updateArticleView(int contentId) {
         TextView article = (TextView) getActivity().findViewById(R.id.message);
         article.setMovementMethod(new ScrollingMovementMethod());
         
-        Content content = Content.Contents.get(position);
-        article.setText(content.getTitle() + "\n\n" + content.getMessage() + "\n\n" + content.getTodo());
-        currentPosition = position;
+        ds = new MessageDataSource(getActivity());
+        ds.open();
+        
+        String content = ds.getMessage(getActivity(), contentId);  
+        
+        ds.close();
+        
+        article.setText(content);
+        currentContentId = contentId;
     }
 
     @Override
@@ -60,6 +68,6 @@ public class MessageFragment extends Fragment {
         super.onSaveInstanceState(outState);
 
         // Save the current article selection in case we need to recreate the fragment
-        outState.putInt(CONTENT_POSITION, currentPosition);
+        outState.putInt(CONTENT_ID, currentContentId);
     }
 }
