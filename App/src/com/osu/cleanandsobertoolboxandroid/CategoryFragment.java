@@ -1,9 +1,9 @@
 package com.osu.cleanandsobertoolboxandroid;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import android.app.Activity;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.view.View;
@@ -11,11 +11,16 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 public class CategoryFragment extends ListFragment {
+	final static String PARENT_ID = "parentId";
+	
+	int currentParentId = -1;
 	MessageDataSource ds;
+	List<Category> CategoryList; 
+	
 	OnCategorySelectedListner mCallback;
 	
 	public interface OnCategorySelectedListner {
-		public void onCategorySelected(int position);
+		public void onCategorySelected(int position, String type);
 	}
 	
 	@Override
@@ -28,15 +33,22 @@ public class CategoryFragment extends ListFragment {
         if (savedInstanceState != null) {
             return;
         }
-
-        // We need to use a different list item layout for devices older than Honeycomb
-        int layout = Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB ?
-                android.R.layout.activity_list_item : android.R.layout.activity_list_item;
         
         ds = new MessageDataSource(getActivity());
         ds.open();
-        List<String> categories = ds.getAllCategories(getActivity());
-        // Create an array adapter for the list view, using the Ipsum headlines array
+        
+        Bundle args = getArguments();
+        currentParentId = args.getInt(PARENT_ID);
+        CategoryList = ds.getAllChildren(getActivity(), currentParentId);
+        
+        ds.close();
+        
+        List<String> categories = new ArrayList<String>();
+        for (Category c : CategoryList) {
+        	categories.add(c.getTitle());
+        }
+        
+        // Create an array adapter for the list view
         setListAdapter(new ArrayAdapter<String>(getActivity(), R.layout.activity_list_layout, categories));
     }
 	
@@ -57,10 +69,9 @@ public class CategoryFragment extends ListFragment {
 	public void onListItemClick(ListView l, View v, int position, long id) {
 		super.onListItemClick(l, v, position, id);
 		
-		String category = (String) getListAdapter().getItem(position);
+		int itemId = CategoryList.get(position).getId();
+		String type = CategoryList.get(position).getType();
 		
-		int categoryId = ds.getCategoryId(getActivity(), category);
-		
-		mCallback.onCategorySelected(categoryId);
+		mCallback.onCategorySelected(itemId, type);
 	}
 }

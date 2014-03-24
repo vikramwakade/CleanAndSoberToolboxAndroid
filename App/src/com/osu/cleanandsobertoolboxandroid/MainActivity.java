@@ -23,8 +23,8 @@ import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.AdView;
 
 public class MainActivity extends FragmentActivity 
-	implements TopicsFragment.OnTopicSelectedListener,
-			   SubCategoryFragment.OnSubCategorySelectedListener,
+	implements /*TopicsFragment.OnTopicSelectedListener,
+			   SubCategoryFragment.OnSubCategorySelectedListener,*/
 			   CategoryFragment.OnCategorySelectedListner {
 
 
@@ -114,17 +114,19 @@ public class MainActivity extends FragmentActivity
         {
 	        MessageDataSource ds = new MessageDataSource(this);
 	        ds.open();
-	        ds.EmptyDb();
-	        String result = ds.ProcessJSONFile(R.raw.finalized_json);
+	        //ds.EmptyDb();
+	        String result = ds.ProcessJSONFile(R.raw.newest_cleaned_data);
 	        ds.PopulateDbFromJSON(result);
 	        ds.close();
         }
         
 		CategoryFragment firstFragment = new CategoryFragment();
-
-        // In case this activity was started with special instructions from an Intent,
-        // pass the Intent's extras to the fragment as arguments
-        firstFragment.setArguments(getIntent().getExtras());
+        
+        // This is the top level fragment, so pass -1 as the parent
+        // id, since it has no parent category
+        Bundle args = new Bundle();
+        args.putInt(CategoryFragment.PARENT_ID, -1);
+        firstFragment.setArguments(args);
 
         // Add the fragment to the 'fragment_container' FrameLayout
         getSupportFragmentManager().beginTransaction()
@@ -264,61 +266,34 @@ public class MainActivity extends FragmentActivity
     }
     
     @Override
-	public void onCategorySelected(int categoryId) {
-		// TODO Auto-generated method stub
-		
-		SubCategoryFragment secondFragment = new SubCategoryFragment();
-		//secondFragment.setArguments(getIntent().getExtras());
-		Bundle args = new Bundle();
-        args.putInt(SubCategoryFragment.CATEGORY_ID, categoryId);
-        secondFragment.setArguments(args);
-		
-		FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-		transaction.replace(R.id.content_frame, secondFragment);
-        transaction.addToBackStack(null);
-        
-        // Commit the transaction
-        transaction.commit();
-	}
-
-	@Override
-	public void onSubCategorySelected(int categoryId, int subCategoryId) {
-		// TODO Auto-generated method stub
-		
-		TopicsFragment thirdFragment = new TopicsFragment();
-		//thirdFragment.setArguments(getIntent().getExtras());
-		Bundle args = new Bundle();
-        args.putInt(TopicsFragment.CATEGORY_ID, categoryId);
-        args.putInt(TopicsFragment.SUBCATEGORY_ID, subCategoryId);
-        
-        thirdFragment.setArguments(args);
-		
-		FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-		transaction.replace(R.id.content_frame, thirdFragment);
-        transaction.addToBackStack(null);
-        
-        // Commit the transaction
-        transaction.commit();
-	}
-
-	@Override
-	public void onTopicSelected(int position) {
-		// TODO Auto-generated method stub
-		
-		MessageFragment messageFragment = new MessageFragment();
-		Bundle args = new Bundle();
-        args.putInt(MessageFragment.CONTENT_POSITION, position);
-        messageFragment.setArguments(args);
-        
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-
-        // Replace whatever is in the fragment_container view with this fragment,
-        // and add the transaction to the back stack so the user can navigate back
-        transaction.replace(R.id.content_frame, messageFragment);
-        transaction.addToBackStack(null);
-
-        // Commit the transaction
-        transaction.commit();
-	}
-	
+   	public void onCategorySelected(int itemId, String type) {
+    	if(type.equals("category")) {
+	    	CategoryFragment categoryFragment = new CategoryFragment();
+	    	
+	    	Bundle args = new Bundle();
+	        args.putInt(CategoryFragment.PARENT_ID, itemId);
+	        categoryFragment.setArguments(args);
+	        
+	        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+			transaction.replace(R.id.content_frame, categoryFragment);
+	        transaction.addToBackStack(null);
+	        
+	        // Commit the transaction
+	        transaction.commit();
+    	} else if(type.equals("content")) {
+    		MessageFragment messageFragment = new MessageFragment();
+    		
+    		Bundle args = new Bundle();
+	        args.putInt(MessageFragment.CONTENT_ID, itemId);
+	        messageFragment.setArguments(args);
+	        
+	        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+			transaction.replace(R.id.content_frame, messageFragment);
+	        transaction.addToBackStack(null);
+	        
+	        // Commit the transaction
+	        transaction.commit();
+    	}
+    }
+    
 }
