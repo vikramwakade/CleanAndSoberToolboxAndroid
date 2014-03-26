@@ -1,5 +1,6 @@
 package com.osu.cleanandsobertoolboxandroid;
 
+import android.app.SearchManager;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -17,6 +18,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.SearchView;
 
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdSize;
@@ -171,7 +173,15 @@ public class MainActivity extends FragmentActivity
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.main, menu);
+        
+        //Associate searchable configuration with Searchview
+        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+         SearchView searchView = (SearchView) menu.findItem(R.id.search).getActionView();
+         searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+
         return super.onCreateOptionsMenu(menu);
+        
+        
     }
 
     /* The click listener for ListView in the navigation drawer */
