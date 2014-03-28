@@ -72,8 +72,17 @@ public class MessageDataSource {
 		    JSONObject structure = jObject.getJSONObject("structure");
 		    JSONArray categories = structure.getJSONArray("list");
 		    
-		    InsertMessages(messages);
-		    InsertStructureEntries(categories, -1);
+		    // This will execute all the insert statements in
+		    // a single transaction rather than creating a new 
+		    // transaction for every insert statement
+		    database.beginTransaction();
+		    try {
+			    InsertMessages(messages);
+			    InsertStructureEntries(categories, -1);
+			    database.setTransactionSuccessful();
+		    } finally {
+		    	database.endTransaction();
+		    }
 	    } catch (JSONException e) {
 			e.printStackTrace();
 		}

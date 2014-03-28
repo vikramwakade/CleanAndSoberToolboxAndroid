@@ -1,8 +1,20 @@
 package com.osu.cleanandsobertoolboxandroid;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
+import java.net.URL;
+
+import android.app.ProgressDialog;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.res.Configuration;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.FragmentActivity;
@@ -19,16 +31,17 @@ import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.SearchView;
+import android.widget.Toast;
 
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.AdView;
 
 public class MainActivity extends FragmentActivity 
-	implements /*TopicsFragment.OnTopicSelectedListener,
-			   SubCategoryFragment.OnSubCategorySelectedListener,*/
-			   CategoryFragment.OnCategorySelectedListner {
-
+	implements CategoryFragment.OnCategorySelectedListner {
+	
+	//A ProgressDialog object  
+    private ProgressDialog progressDialog;  
 
     private ActionBarDrawerToggle mDrawerToggle;
     private ListView mDrawerList;
@@ -48,12 +61,12 @@ public class MainActivity extends FragmentActivity
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.all_categories);
 
-		 // Create an ad.
+		// Create an ad.
 	    adView = new AdView(this);
 	    adView.setAdSize(AdSize.BANNER);
 	    adView.setAdUnitId("0445b7141d9d4e1b");
 	    
-	 // Add the AdView to the view hierarchy. The view will have no size
+	    // Add the AdView to the view hierarchy. The view will have no size
 	    // until the ad is loaded.
 	    LinearLayout layout = (LinearLayout) findViewById(R.id.linearlayout);
 	    layout.addView(adView);
@@ -62,7 +75,7 @@ public class MainActivity extends FragmentActivity
 
 	    String deviceid = tm.getDeviceId();
 	    
-	 // Create an ad request. Check logcat output for the hashed device ID to
+	    // Create an ad request. Check logcat output for the hashed device ID to
 	    // get test ads on a physical device.
 	    AdRequest adRequest = new AdRequest.Builder()
 	        .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
@@ -133,34 +146,35 @@ public class MainActivity extends FragmentActivity
         // Add the fragment to the 'fragment_container' FrameLayout
         getSupportFragmentManager().beginTransaction()
                 .add(R.id.content_frame, firstFragment).commit();
+        
 	}
 
-	 @Override
-	  public void onResume() {
-	    super.onResume();
-	    if (adView != null) {
-	      adView.resume();
-	    }
-	  }
-
-	  @Override
-	  public void onPause() {
-	    if (adView != null) {
-	      adView.pause();
-	    }
-	    super.onPause();
-	  }
-
-
-	  /** Called before the activity is destroyed. */
-	  @Override
-	  public void onDestroy() {
-	    // Destroy the AdView.
-	    if (adView != null) {
-	      adView.destroy();
-	    }
-	    super.onDestroy();
-	  }
+	@Override
+	public void onResume() {
+		super.onResume();
+		if (adView != null) {
+			adView.resume();
+		}
+	}
+	
+	@Override
+	public void onPause() {
+		if (adView != null) {
+			adView.pause();
+		}
+		super.onPause();
+	}
+	
+	
+	/** Called before the activity is destroyed. */
+	@Override
+	public void onDestroy() {
+		// Destroy the AdView.
+		if (adView != null) {
+			adView.destroy();
+		}
+		super.onDestroy();
+	}
 	  
 	/* Called whenever we call invalidateOptionsMenu() */
     @Override
@@ -306,4 +320,84 @@ public class MainActivity extends FragmentActivity
     	}
     }
     
+    private class LoadAppDataTask extends AsyncTask<String, Void, Void> {
+    	MessageDataSource ds = new MessageDataSource(getApplicationContext());
+    	
+    	@Override
+		protected Void doInBackground(String... urls) {
+    		// params comes from the execute() call: params[0] is the url.
+			try {
+				String data = downloadUrl(urls[0]);
+				
+				// Code to create the database when run for the first time
+	            // and then populate the tables with data read from json file
+	            if (!MessageDataSource.databaseExist(getApplicationContext(), MessageReaderDbHelper.DATABASE_NAME))
+	            {
+	    	        ds.open();
+	    	        //ds.EmptyDb();
+	    	        String result = ds.ProcessJSONFile(R.raw.newest_cleaned_data);
+	    	        ds.PopulateDbFromJSON(result);
+	    	        ds.close();
+	            }
+				
+				return null;
+		    } catch (IOException e) {
+		        // "Unable to retrieve web page. URL may be invalid.";
+		    	return null;
+		    }
+    	}
+    	
+    	@Override
+    	protected void onPostExecute(Void data) {
+    		
+    	}
+    }
+    
+    // Given a URL, establishes an HttpUrlConnection and retrieves
+ 	// the web page content as a InputStream, which it returns as
+ 	// a string.
+ 	private String downloadUrl(String myurl) throws IOException {
+ 	    InputStream is = null;
+ 	    // Only display the first 500 characters of the retrieved
+ 	    // web page content.
+ 		int len = 500;
+ 	  
+ 		try {
+ 			URL url = new URL(myurl);
+ 			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+ 			conn.setReadTimeout(10000 /* milliseconds */);
+ 			conn.setConnectTimeout(15000 /* milliseconds */);
+ 			conn.setRequestMethod("GET");
+ 			conn.setDoInput(true);
+ 			// Starts the query
+ 			conn.connect();
+ 			int response = conn.getResponseCode();
+ 			System.out.println(response);
+ 			is = conn.getInputStream();
+ 			// Convert the InputStream into a string
+ 			String contentAsString = readIt(is, len);
+ 			return contentAsString;
+ 		    // Makes sure that the InputStream is closed after the app is
+ 		    // finished using it.
+ 	     } finally {
+ 	    	 if (is != null) {
+ 	    		 is.close();
+ 	         } 
+ 	     }
+ 	}
+ 	
+ 	// Reads an InputStream and converts it to a String.
+ 	public String readIt(InputStream stream, int len) throws IOException, UnsupportedEncodingException {
+ 		final char[] buffer = new char[len];
+ 		final StringBuilder out = new StringBuilder();
+ 		
+ 	    Reader reader = new InputStreamReader(stream, "UTF-8");        
+ 	    for (;;) {
+ 	    	int rsz = reader.read(buffer, 0, buffer.length);
+ 	    	if (rsz < 0)
+ 	           break;
+ 	    	out.append(buffer, 0, rsz);
+ 	    }
+ 	    return new String(out.toString());
+ 	}
 }
