@@ -1,7 +1,16 @@
 package com.osu.cleanandsobertoolboxandroid;
 
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+
+
 import android.app.SearchManager;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
@@ -20,6 +29,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.SearchView;
 
+
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.AdView;
@@ -29,13 +39,14 @@ public class MainActivity extends FragmentActivity
 			   SubCategoryFragment.OnSubCategorySelectedListener,*/
 			   CategoryFragment.OnCategorySelectedListner {
 
-
+	SharedPreferences prefs = null;
     private ActionBarDrawerToggle mDrawerToggle;
     private ListView mDrawerList;
     private DrawerLayout mDrawerLayout;
     
     private CharSequence mDrawerTitle;
     private CharSequence mTitle;
+    public int days = 1;
     
     /** The view to show the ad. */
     private AdView adView;
@@ -47,6 +58,8 @@ public class MainActivity extends FragmentActivity
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.all_categories);
+		
+		
 
 		 // Create an ad.
 	    adView = new AdView(this);
@@ -103,7 +116,7 @@ public class MainActivity extends FragmentActivity
             }
 
             public void onDrawerOpened(View drawerView) {
-                getActionBar().setTitle("Days Sober 20");//(mDrawerTitle);
+                getActionBar().setTitle("Days Sober: " + days);//(mDrawerTitle);
                 invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
             }
         };
@@ -141,6 +154,67 @@ public class MainActivity extends FragmentActivity
 	    if (adView != null) {
 	      adView.resume();
 	    }
+	    
+	  //Get prefs
+	    prefs = getSharedPreferences("com.osu.cleanandsobertoolboxaround", MODE_PRIVATE);
+	 // Create an instance of SimpleDateFormat used for formatting 
+	 // the string representation of date (month/day/year)
+	 	DateFormat df = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss", Locale.US);
+	 //Check if this is the first time the app is run
+	 	if (prefs.getBoolean("firstrun", true) == true) {
+	 		    	
+	 		// Get the date today using Calendar object.
+	 		Date today = Calendar.getInstance().getTime();  
+	 				
+	 		String todaysDate = df.format(today);
+	 				
+	 		//Set prefs for this being first date app is used
+	 		prefs.edit().putString("LAST_USED", todaysDate).commit();
+	 	    prefs.edit().putBoolean("firstrun", false).commit();
+	 	 }
+	 	 else{
+	 		 //Check how many days it has been since last use
+	 		
+	 		 //Get pref value
+	 		 String lastDate = prefs.getString("LAST_USED", "This shouldn't happen");
+	 		 //Find today's date
+	 		 Date today = Calendar.getInstance().getTime();  
+	 		 //Convert to a string
+	 		 String todaysDate = df.format(today);
+	 				
+	 		 //Change day to int
+	 		 int todayday = Integer.parseInt(todaysDate.substring(3,5));
+	 				
+	 		 int lastday = Integer.parseInt(lastDate.substring(3,5));
+	 				
+	 		 if (todayday != lastday){
+	 			//Different day, add a day to user's time
+	 			days++;
+	 					
+	 			//Change date for prefs
+	 			prefs.edit().putString("LAST_USED", df.format(todaysDate)).commit();
+	 		 }
+	 				
+	 		 else{
+	 		 //Check months/years just in case user hasn't used for a month or a year exactly
+	 			 int todaymonth = Integer.parseInt(todaysDate.substring(0,2));
+	 					
+	 			 int lastmonth = Integer.parseInt(lastDate.substring(0,2));
+	 					
+	 			 int todayyear = Integer.parseInt(todaysDate.substring(6,10));
+	 					
+	 			 int lastyear = Integer.parseInt(lastDate.substring(6,10));
+	 					
+	 			 if ((todaymonth != lastmonth) || (todayyear != lastyear)){
+	 				//Same day but different month or year, add a day
+	 				 days++;
+	 						
+	 				//Change date for prefs
+	 				 prefs.edit().putString("LAST_USED", df.format(todaysDate)).commit();
+	 			}
+	 			}
+	 				
+	 		    }
 	  }
 
 	  @Override
