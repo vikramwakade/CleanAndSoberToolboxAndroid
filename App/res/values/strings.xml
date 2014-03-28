@@ -4,13 +4,12 @@
     <string name="app_name">CleanAndSoberToolboxAndroid</string>
     <string name="action_settings">Settings</string>
 
-
-    <string-array name="drawer_array"> 
-        <item>Disclaimer</item> 
-        <item>Donate</item> 
-        <item>Psychology</item> 
-        <item>Settings</item> 
-    </string-array> 
+    <string-array name="drawer_array">
+        <item>Disclaimer</item>
+        <item>Donate</item>
+        <item>Psychology</item>
+        <item>Notifications</item>
+    </string-array>
 
     <string name="drawer_open">Open navigation drawer</string>
     <string name="drawer_close">Close navigation drawer</string>
@@ -18,10 +17,10 @@
     <string name="title_activity_paypal_donation">PaypalDonation</string>
     <string name="buy">Buy a thing</string>
     <string name="push_notifications">Would you like to receive push notifications?</string>
-    <string name="enter_email">Your email address:</string>
-    <string name ="weekly_email">Would you like to receive weekly emails?</string>
-    <string name ="app_label">Clean and Sober Toolbox</string>
-    <string name ="search_hint">Type a few words here to describe your issue or feelings.</string>
-    <string name ="action_search">Search</string>
+    <string name="app_label">Clean and Sober Toolbox</string>
+    <string name="search_hint">Type a few words here to describe your issue or feelings.</string>
+    <string name="action_search">Search</string>
+    <string name="title_activity_splash_screen">SplashScreenActivity</string>
+    <string name="hello_world">Hello world!</string>
 
 </resources>

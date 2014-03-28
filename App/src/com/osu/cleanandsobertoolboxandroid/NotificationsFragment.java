@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 
 public class NotificationsFragment extends Fragment {
 	int curPosition = -1;
-	final static int POSITION = 4;
+	final static int POSITION = 3;
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, 
