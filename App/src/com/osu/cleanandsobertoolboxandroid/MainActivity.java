@@ -182,7 +182,7 @@ public class MainActivity extends FragmentActivity
 				//Different day, add a day to user's time
 				days++;
 				//Change date for prefs
-				prefs.edit().putString("LAST_USED", df.format(todaysDate)).commit();
+				prefs.edit().putString("LAST_USED", todaysDate).commit();
 			} else {
 				//Check months/years just in case user hasn't used for a month or a year exactly
 				int todaymonth = Integer.parseInt(todaysDate.substring(0,2));			

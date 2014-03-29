@@ -15,6 +15,7 @@
     <string name="drawer_close">Close navigation drawer</string>
     <string name="action_websearch">Web search</string>
     <string name="title_activity_paypal_donation">PaypalDonation</string>
+    <string name="title_activity_splash_screen">SplashScreen</string>
     <string name="buy">Buy a thing</string>
     <string name="push_notifications">Would you like to receive push notifications?</string>
     <string name="app_label">Clean and Sober Toolbox</string>
