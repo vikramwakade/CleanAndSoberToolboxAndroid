@@ -12,7 +12,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.app.Activity;
 import android.content.Intent;
-import android.view.Menu;
 import android.os.Handler;
 
 public class SplashScreenActivity extends Activity {
@@ -38,6 +37,8 @@ public class SplashScreenActivity extends Activity {
 		}, SPLASH_TIME_OUT);
 	}
 
+	// TODO: Use this AnyncTask to download the JSON from the server
+	// when it is ready.
 	private class DownloadFileTask extends AsyncTask<String, Void, Void> {
     	MessageDataSource ds = new MessageDataSource(getApplicationContext());
     	
@@ -56,7 +57,7 @@ public class SplashScreenActivity extends Activity {
     	
     	@Override
     	protected void onPostExecute(Void data) {
-    		
+    		// TODO: start the main app activity here
     	}
     }
     
