@@ -20,7 +20,6 @@
     <string name="app_label">Clean and Sober Toolbox</string>
     <string name="search_hint">Type a few words here to describe your issue or feelings.</string>
     <string name="action_search">Search</string>
-    <string name="title_activity_splash_screen">SplashScreenActivity</string>
     <string name="hello_world">Hello world!</string>
 
 </resources>
