@@ -2,6 +2,7 @@ package com.osu.cleanandsobertoolboxandroid;
 
 import android.app.SearchManager;
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
@@ -19,6 +20,7 @@ import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.SearchView;
+import android.widget.Toast;
 
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdSize;
@@ -30,6 +32,8 @@ public class MainActivity extends FragmentActivity
 			   CategoryFragment.OnCategorySelectedListner {
 
 
+	public final static String EXTRA_MESSAGE = "com.example.cbt.DONATION";
+	
     private ActionBarDrawerToggle mDrawerToggle;
     private ListView mDrawerList;
     private DrawerLayout mDrawerLayout;
@@ -196,6 +200,7 @@ public class MainActivity extends FragmentActivity
         //update the main content by replacing fragments
         //TODO:
         //mDrawerLayout.closeDrawer(mDrawerList);
+    	Toast.makeText(this,  " selected", Toast.LENGTH_LONG).show();
     	Log.i("Info", ""+position);
     	if (position == NavigationMessageFragment.disclaimer || position == NavigationMessageFragment.psychology) {
 	    	NavigationMessageFragment frag = new NavigationMessageFragment();
@@ -239,6 +244,13 @@ public class MainActivity extends FragmentActivity
 	
 	        // Commit the transaction
 	        transaction.commit();
+    	} else if (position == 1){
+    		Toast.makeText(this,  " selected", Toast.LENGTH_LONG).show();
+    		Log.i("Info", ""+position);
+    		Intent intent = new Intent(this, PaypalDonation.class);
+    		String message = "No message";
+    		intent.putExtra(EXTRA_MESSAGE, message);
+    		startActivity(intent);
     	}
     	mDrawerLayout.closeDrawer(mDrawerList);
     }

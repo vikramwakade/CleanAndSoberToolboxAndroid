@@ -2,6 +2,7 @@ package com.osu.cleanandsobertoolboxandroid;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.text.Html;
 import android.text.method.ScrollingMovementMethod;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,7 +11,7 @@ import android.widget.TextView;
 
 public class MessageFragment extends Fragment {
 	final static String CONTENT_ID = "contentId";
-	
+
     int currentContentId = -1;
     MessageDataSource ds;
     
@@ -59,7 +60,7 @@ public class MessageFragment extends Fragment {
         
         ds.close();
         
-        article.setText(content);
+        article.setText(Html.fromHtml(content));
         currentContentId = contentId;
     }
 

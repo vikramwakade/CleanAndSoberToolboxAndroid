@@ -2,6 +2,7 @@ package com.osu.cleanandsobertoolboxandroid;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.text.Html;
 import android.text.method.ScrollingMovementMethod;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -51,7 +52,7 @@ public class NavigationMessageFragment extends Fragment{
 	public void updateMessageView(int position) {
 		TextView article = (TextView) getActivity().findViewById(R.id.message);
         article.setMovementMethod(new ScrollingMovementMethod());
-        article.setText(Data.NavigationMessage[position]);
+        article.setText(Html.fromHtml(Data.NavigationMessage[position]));
         curPosition = position;
             
     }
