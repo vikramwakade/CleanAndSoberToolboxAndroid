@@ -1,11 +1,10 @@
 package com.osu.cleanandsobertoolboxandroid;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-
 
 import android.app.SearchManager;
 import android.content.Context;
@@ -30,7 +29,6 @@ import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.Toast;
 
-
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.AdView;
@@ -39,6 +37,7 @@ public class MainActivity extends FragmentActivity
 	implements CategoryFragment.OnCategorySelectedListner {
 
 	public final static String EXTRA_MESSAGE = "com.example.cbt.DONATION";
+	public final static String DAYS_SOBER = "DAYS_SOBER";
 
 	SharedPreferences prefs = null;
     private ActionBarDrawerToggle mDrawerToggle;
@@ -158,6 +157,8 @@ public class MainActivity extends FragmentActivity
 		// Create an instance of SimpleDateFormat used for formatting 
 		// the string representation of date (month/day/year)
 		DateFormat df = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss", Locale.US);
+		
+		days = prefs.getInt(DAYS_SOBER, 1);
 		//Check if this is the first time the app is run
 		if (prefs.getBoolean("firstrun", true) == true) {
 			
@@ -169,6 +170,7 @@ public class MainActivity extends FragmentActivity
 			//Set prefs for this being first date app is used
 			prefs.edit().putString("LAST_USED", todaysDate).commit();
 			prefs.edit().putBoolean("firstrun", false).commit();
+			prefs.edit().putInt(DAYS_SOBER, days).commit();
 		} else {
 			//Check how many days it has been since last use
 
@@ -178,7 +180,7 @@ public class MainActivity extends FragmentActivity
 			Date today = Calendar.getInstance().getTime();  
 			//Convert to a string
 			String todaysDate = df.format(today);
-			//Change day to int
+
 			Date last_date=Calendar.getInstance().getTime(), today_date=Calendar.getInstance().getTime();;
 			try {
 				last_date = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss", Locale.US).parse(lastDate);
@@ -193,8 +195,10 @@ public class MainActivity extends FragmentActivity
 		    if (diffHours > 24){
 		    	//Different day, add a day to user's time
 				days++;
+		
 				//Change date for prefs
 				prefs.edit().putString("LAST_USED", todaysDate).commit();
+				prefs.edit().putInt(DAYS_SOBER, days).commit();
 		    }
 		}
 	}
