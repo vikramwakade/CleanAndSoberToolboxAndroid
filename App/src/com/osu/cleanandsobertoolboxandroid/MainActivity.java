@@ -9,6 +9,7 @@ import java.text.SimpleDateFormat;
 
 import android.app.SearchManager;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -27,6 +28,7 @@ import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.SearchView;
+import android.widget.Toast;
 
 
 import com.google.android.gms.ads.AdRequest;
@@ -35,6 +37,8 @@ import com.google.android.gms.ads.AdView;
 
 public class MainActivity extends FragmentActivity 
 	implements CategoryFragment.OnCategorySelectedListner {
+
+	public final static String EXTRA_MESSAGE = "com.example.cbt.DONATION";
 
 	SharedPreferences prefs = null;
     private ActionBarDrawerToggle mDrawerToggle;
@@ -175,28 +179,23 @@ public class MainActivity extends FragmentActivity
 			//Convert to a string
 			String todaysDate = df.format(today);
 			//Change day to int
-			int todayday = Integer.parseInt(todaysDate.substring(3,5));
-			int lastday = Integer.parseInt(lastDate.substring(3,5));
-
-			if (todayday != lastday) {
-				//Different day, add a day to user's time
+			Date last_date=Calendar.getInstance().getTime(), today_date=Calendar.getInstance().getTime();;
+			try {
+				last_date = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss", Locale.US).parse(lastDate);
+				today_date = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss", Locale.US).parse(todaysDate);
+			} catch (Exception e) {
+				
+			}
+			
+			long diff = today_date.getTime() - last_date.getTime();
+		    long diffHours= diff / (60 * 60 * 1000);
+		    
+		    if (diffHours > 24){
+		    	//Different day, add a day to user's time
 				days++;
 				//Change date for prefs
 				prefs.edit().putString("LAST_USED", todaysDate).commit();
-			} else {
-				//Check months/years just in case user hasn't used for a month or a year exactly
-				int todaymonth = Integer.parseInt(todaysDate.substring(0,2));			
-				int lastmonth = Integer.parseInt(lastDate.substring(0,2));
-				int todayyear = Integer.parseInt(todaysDate.substring(6,10));
-				int lastyear = Integer.parseInt(lastDate.substring(6,10));
-				
-				if ((todaymonth != lastmonth) || (todayyear != lastyear)){
-					//Same day but different month or year, add a day
-					days++;
-					//Change date for prefs
-					prefs.edit().putString("LAST_USED", df.format(todaysDate)).commit();
-				}
-	 		}
+		    }
 		}
 	}
 
@@ -251,6 +250,7 @@ public class MainActivity extends FragmentActivity
         //update the main content by replacing fragments
         //TODO:
         //mDrawerLayout.closeDrawer(mDrawerList);
+    	Toast.makeText(this,  " selected", Toast.LENGTH_LONG).show();
     	Log.i("Info", ""+position);
     	if (position == NavigationMessageFragment.disclaimer || position == NavigationMessageFragment.psychology) {
     		NavigationMessageFragment frag = new NavigationMessageFragment();
@@ -292,6 +292,13 @@ public class MainActivity extends FragmentActivity
 
 	        // Commit the transaction
 	        transaction.commit();
+    	} else if (position == 1){
+    		Toast.makeText(this,  " selected", Toast.LENGTH_LONG).show();
+    		Log.i("Info", ""+position);
+    		Intent intent = new Intent(this, PaypalDonation.class);
+    		String message = "No message";
+    		intent.putExtra(EXTRA_MESSAGE, message);
+    		startActivity(intent);
     	}
     	mDrawerLayout.closeDrawer(mDrawerList);
     }
