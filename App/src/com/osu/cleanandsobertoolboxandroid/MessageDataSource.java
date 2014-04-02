@@ -16,6 +16,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteQueryBuilder;
 
 import com.osu.cleanandsobertoolboxandroid.MessageDbContract.*;
 
@@ -227,5 +228,28 @@ public class MessageDataSource {
 		}
 		
 		return message;
+	}
+	
+	public Cursor getWordMatches(String query, String[] columns) {
+	    String selection = MessageEntry.COLUMN_NAME_MESSAGE + " MATCH ?";
+	    String[] selectionArgs = new String[] {query+"*"};
+
+	    return query(selection, selectionArgs, columns);
+	}
+
+	private Cursor query(String selection, String[] selectionArgs, String[] columns) {
+	    SQLiteQueryBuilder builder = new SQLiteQueryBuilder();
+	    builder.setTables(MessageEntry.TABLE_NAME);
+
+	    Cursor cursor = builder.query(database,
+	            columns, selection, selectionArgs, null, null, null);
+
+	    if (cursor == null) {
+	        return null;
+	    } else if (!cursor.moveToFirst()) {
+	        cursor.close();
+	        return null;
+	    }
+	    return cursor;
 	}
 }

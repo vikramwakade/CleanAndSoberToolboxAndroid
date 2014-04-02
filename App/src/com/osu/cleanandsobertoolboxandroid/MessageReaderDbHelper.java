@@ -1,8 +1,10 @@
 package com.osu.cleanandsobertoolboxandroid;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.database.sqlite.SQLiteQueryBuilder;
 
 import com.osu.cleanandsobertoolboxandroid.MessageDbContract.*;
 
@@ -56,6 +58,7 @@ public class MessageReaderDbHelper extends SQLiteOpenHelper {
     	db.execSQL(SQL_DELETE_MESSAGES);
     	onCreate(db);
 	}
+	
 	
 	
 }

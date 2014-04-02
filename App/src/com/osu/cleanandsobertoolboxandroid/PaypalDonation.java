@@ -10,6 +10,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
+import android.widget.EditText;
+import android.widget.Toast;
 
 import com.paypal.android.sdk.payments.PayPalPayment;
 import com.paypal.android.sdk.payments.PayPalService;
@@ -25,11 +27,14 @@ public class PaypalDonation extends Activity {
     
 	// note that these credentials will differ between live & sandbox environments.
     private static final String CONFIG_CLIENT_ID = "credential from developer.paypal.com"; //"credential-from-developer.paypal.com"
-
+    
+    private EditText donationAmt;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_paypal_donation);
+		
+		donationAmt = (EditText)findViewById(R.id.donationAmt);
 		
 		Intent intent = new Intent(this, PayPalService.class);
 
@@ -56,25 +61,34 @@ public class PaypalDonation extends Activity {
 	}
 	
 	public void onBuyPressed(View pressed) {
-	    PayPalPayment payment = new PayPalPayment(new BigDecimal("8.75"), "USD", "hipster jeans");
-
-	    Intent intent = new Intent(this, PaymentActivity.class);
-
-	    // comment this line out for live or set to PaymentActivity.ENVIRONMENT_SANDBOX for sandbox
-	    intent.putExtra(PaymentActivity.EXTRA_PAYPAL_ENVIRONMENT, CONFIG_ENVIRONMENT);
-
-	    // it's important to repeat the clientId here so that the SDK has it if Android restarts your
-	    // app midway through the payment UI flow.
-	    intent.putExtra(PaymentActivity.EXTRA_CLIENT_ID, CONFIG_CLIENT_ID);
-
-	    // Provide a payerId that uniquely identifies a user within the scope of your system,
-	    // such as an email address or user ID.
-	    intent.putExtra(PaymentActivity.EXTRA_PAYER_ID, "<someuser@somedomain.com>");
-
-	    intent.putExtra(PaymentActivity.EXTRA_RECEIVER_EMAIL, "<YOUR_PAYPAL_EMAIL_ADDRESS>");
-	    intent.putExtra(PaymentActivity.EXTRA_PAYMENT, payment);
-
-	    startActivityForResult(intent, 0);
+		String amount = donationAmt.getText().toString();
+		if(!amount.equals("")){
+			Toast.makeText(this,  amount + " selected", Toast.LENGTH_LONG).show();
+			float amt = (float)Float.valueOf(amount);
+			if (amt < 1) {
+				Toast.makeText(this,  "Please donate atleast $1.00", Toast.LENGTH_LONG).show();
+			} else{
+			    PayPalPayment payment = new PayPalPayment(new BigDecimal(amount), "USD", "Donate");
+		
+			    Intent intent = new Intent(this, PaymentActivity.class);
+		
+			    // comment this line out for live or set to PaymentActivity.ENVIRONMENT_SANDBOX for sandbox
+			    intent.putExtra(PaymentActivity.EXTRA_PAYPAL_ENVIRONMENT, CONFIG_ENVIRONMENT);
+		
+			    // it's important to repeat the clientId here so that the SDK has it if Android restarts your
+			    // app midway through the payment UI flow.
+			    intent.putExtra(PaymentActivity.EXTRA_CLIENT_ID, CONFIG_CLIENT_ID);
+		
+			    // Provide a payerId that uniquely identifies a user within the scope of your system,
+			    // such as an email address or user ID.
+			    intent.putExtra(PaymentActivity.EXTRA_PAYER_ID, "<someuser@somedomain.com>");
+		
+			    intent.putExtra(PaymentActivity.EXTRA_RECEIVER_EMAIL, "<YOUR_PAYPAL_EMAIL_ADDRESS>");
+			    intent.putExtra(PaymentActivity.EXTRA_PAYMENT, payment);
+		
+			    startActivityForResult(intent, 0);
+			}
+		}
 	}
 	
 	@Override

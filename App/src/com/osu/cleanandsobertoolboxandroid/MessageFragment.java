@@ -11,7 +11,7 @@ import android.widget.TextView;
 
 public class MessageFragment extends Fragment {
 	final static String CONTENT_ID = "contentId";
-	
+
     int currentContentId = -1;
     MessageDataSource ds;
     
