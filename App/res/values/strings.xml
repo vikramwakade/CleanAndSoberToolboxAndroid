@@ -9,6 +9,8 @@
         <item>Donate</item>
         <item>Psychology</item>
         <item>Notifications</item>
+        <item>Certificate</item>
+        <item>View Coin</item>
     </string-array>
 
     <string name="drawer_open">Open navigation drawer</string>
@@ -24,5 +26,8 @@
     <string name="search_hint">Type a few words here to describe your issue or feelings.</string>
     <string name="action_search">Search</string>
     <string name="hello_world">Hello world!</string>
+    <string name="title_activity_certificate_fragment">CertificateFragment</string>
+    <string name="certdescription">This is an image of a certificate for using the app for 1 year.</string>
+    <string name="coindescription">This is an image of a coin for using the app for different lengths of time.</string>
 
 </resources>

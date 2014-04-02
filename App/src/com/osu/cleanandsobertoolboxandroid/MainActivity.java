@@ -13,6 +13,7 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
@@ -181,7 +182,7 @@ public class MainActivity extends FragmentActivity
 			//Convert to a string
 			String todaysDate = df.format(today);
 
-			Date last_date=Calendar.getInstance().getTime(), today_date=Calendar.getInstance().getTime();;
+			Date last_date=Calendar.getInstance().getTime(), today_date=Calendar.getInstance().getTime();
 			try {
 				last_date = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss", Locale.US).parse(lastDate);
 				today_date = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss", Locale.US).parse(todaysDate);
@@ -303,7 +304,43 @@ public class MainActivity extends FragmentActivity
     		String message = "No message";
     		intent.putExtra(EXTRA_MESSAGE, message);
     		startActivity(intent);
+    	}else if (position == CertificateFragment.POSITION)
+    	{
+    		//Create new certificate fragment if days are equal to one year
+    		CertificateFragment certfrag = new CertificateFragment();
+    		FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+    		
+    		// Replace whatever is in the fragment_container view with this fragment,
+	        // and add the transaction to the back stack so the user can navigate back
+    		transaction.replace(R.id.content_frame, certfrag);
+    		transaction.addToBackStack(null);
+    		
+    		//Commit transaction
+    		transaction.commit();
     	}
+    	else if (position == CoinFragment.position)
+    	{
+    		//Check that user has earned at least one coin
+    		if (days < 7)
+    		{
+    			Toast.makeText(this, "Sorry, but you haven't received a coin yet! Your first coin will be given to you after you use the app for 7 days.", Toast.LENGTH_LONG).show();
+    		}
+    		else
+    		{
+    		//Create new coin fragment
+    		CoinFragment coinfrag = new CoinFragment();
+    		FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+    		
+    		// Replace whatever is in the fragment_container view with this fragment,
+	        // and add the transaction to the back stack so the user can navigate back
+    		transaction.replace(R.id.content_frame, coinfrag);
+    		transaction.addToBackStack(null);
+    		
+    		//Commit transaction
+    		transaction.commit();
+    		}
+    	}
+    	
     	mDrawerLayout.closeDrawer(mDrawerList);
     }
 
