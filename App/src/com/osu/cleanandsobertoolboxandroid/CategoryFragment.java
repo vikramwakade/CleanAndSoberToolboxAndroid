@@ -17,9 +17,9 @@ public class CategoryFragment extends ListFragment {
 	MessageDataSource ds;
 	List<Category> CategoryList; 
 	
-	OnCategorySelectedListner mCallback;
+	onCategorySelectedListener mCallback;
 	
-	public interface OnCategorySelectedListner {
+	public interface onCategorySelectedListener {
 		public void onCategorySelected(int position, String type);
 	}
 	
@@ -56,7 +56,7 @@ public class CategoryFragment extends ListFragment {
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
 		
-		mCallback = (OnCategorySelectedListner) activity;
+		mCallback = (onCategorySelectedListener) activity;
 	}
 
 	@Override

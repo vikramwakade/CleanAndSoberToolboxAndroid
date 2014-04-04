@@ -34,9 +34,10 @@ import android.widget.Toast;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.AdView;
+import com.osu.cleanandsobertoolboxandroid.CategoryFragment.onCategorySelectedListener;
 
 public class MainActivity extends FragmentActivity 
-	implements CategoryFragment.OnCategorySelectedListner ,RewardsFragment.onArticleSelectedListener {
+	implements onCategorySelectedListener ,RewardsFragment.onArticleSelectedListener {
 
 	public final static String EXTRA_MESSAGE = "com.example.cbt.DONATION";
 	public final static String DAYS_SOBER = "DAYS_SOBER";
@@ -155,7 +156,7 @@ public class MainActivity extends FragmentActivity
 		}
 
 		//Get prefs
-		prefs = getSharedPreferences("com.osu.cleanandsobertoolboxaround", MODE_PRIVATE);
+		prefs = getSharedPreferences("com.osu.cleanandsobertoolboxandroid", MODE_PRIVATE);
 		// Create an instance of SimpleDateFormat used for formatting 
 		// the string representation of date (month/day/year)
 		DateFormat df = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss", Locale.US);
