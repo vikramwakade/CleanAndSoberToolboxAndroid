@@ -31,7 +31,7 @@ public class RewardsFragment extends ListFragment
     		R.drawable.ninetydaysicon,R.drawable.sixmonthsicon, R.drawable.ninemonthsicon,R.drawable.yearicon,R.drawable.certicon};
     
     //Get strings for rows
-    public final String[] text = {"Seven Days", "Thiry Days", "Sixty Days", "Ninety Days", "Six Months", "Nine Months", "One Year", "Certificate"};
+    public final String[] text = {"Seven Days", "Thirty Days", "Sixty Days", "Ninety Days", "Six Months", "Nine Months", "One Year", "Certificate"};
     
     //onArticleSelectedListener interface (must be implemented in activity)
     public interface onArticleSelectedListener{
@@ -65,7 +65,6 @@ public class RewardsFragment extends ListFragment
     public View onCreateView(LayoutInflater inflater, ViewGroup container, 
 	        Bundle savedInstanceState){
     	View v1 = inflater.inflate(R.layout.reward_list, container, false);
-    	//listView = (ListView) v1.findViewById(android.R.id.list);
     	return v1;
     }
     
@@ -74,7 +73,6 @@ public class RewardsFragment extends ListFragment
     public void onActivityCreated (Bundle savedInstanceState){
     	super.onActivityCreated(savedInstanceState);
     	RewardAdapter adapter = new RewardAdapter(getActivity(),R.layout.rewards_list_item,rowItems);
-    	//listView.setAdapter(adapter);
     	setListAdapter(adapter);
     }
     	

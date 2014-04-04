@@ -126,11 +126,11 @@ public class RewardAdapter extends ArrayAdapter<RewardRowItem>{
 				holder.imageView.setImageResource(rowItem.getImageId());
 			}
 		
-			if (convertView.isEnabled() == false){
+			if (this.isEnabled(position) == false){
 				convertView.setAlpha(75); 
 				convertView.setBackgroundColor(Color.GRAY);
 			}
-			else if (convertView.isEnabled() == true){
+			else if (this.isEnabled(position) == true){
 				convertView.setAlpha(255);
 				convertView.setBackgroundColor(Color.WHITE);
 			}
