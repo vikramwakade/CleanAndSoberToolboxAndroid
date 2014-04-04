@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 
 public class CertificateFragment extends Fragment{
 	int curPosition = -1;
-	final static int POSITION = 4;
+	final static int POSITION = 7;
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, 

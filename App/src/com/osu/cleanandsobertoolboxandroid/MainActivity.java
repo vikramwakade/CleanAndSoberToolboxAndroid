@@ -14,6 +14,7 @@ import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.FragmentActivity;
+import android.app.ListFragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
 import android.telephony.TelephonyManager;
@@ -24,6 +25,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.SearchView;
@@ -34,7 +36,7 @@ import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.AdView;
 
 public class MainActivity extends FragmentActivity 
-	implements CategoryFragment.OnCategorySelectedListner {
+	implements CategoryFragment.OnCategorySelectedListner ,RewardsFragment.onArticleSelectedListener {
 
 	public final static String EXTRA_MESSAGE = "com.example.cbt.DONATION";
 	public final static String DAYS_SOBER = "DAYS_SOBER";
@@ -303,47 +305,63 @@ public class MainActivity extends FragmentActivity
     		String message = "No message";
     		intent.putExtra(EXTRA_MESSAGE, message);
     		startActivity(intent);
-    	}else if (position == CertificateFragment.POSITION)
-    	{
-    		//Create new certificate fragment if days are equal to one year
-    		CertificateFragment certfrag = new CertificateFragment();
-    		FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-    		
-    		// Replace whatever is in the fragment_container view with this fragment,
-	        // and add the transaction to the back stack so the user can navigate back
-    		transaction.replace(R.id.content_frame, certfrag);
-    		transaction.addToBackStack(null);
-    		
-    		//Commit transaction
-    		transaction.commit();
     	}
-    	else if (position == CoinFragment.position)
+    	else if (position == RewardsFragment.position)
     	{
-    		//Check that user has earned at least one coin
-    		if (days < 7)
-    		{
-    			Toast.makeText(this, "Sorry, but you haven't received a coin yet! Your first coin will be given to you after you use the app for 7 days.", Toast.LENGTH_LONG).show();
-    		}
-    		else
-    		{
-    		//Create new coin fragment
-    		CoinFragment coinfrag = new CoinFragment();
+    		//Create RewardsMenu fragment
+    		RewardsFragment rewardfrag = new RewardsFragment();
     		FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
     		
     		// Replace whatever is in the fragment_container view with this fragment,
 	        // and add the transaction to the back stack so the user can navigate back
-    		transaction.replace(R.id.content_frame, coinfrag);
+    		//transaction.replace(R.id.content_frame, rewardfrag);
+    		transaction.replace(R.id.content_frame, rewardfrag);
     		transaction.addToBackStack(null);
     		
     		//Commit transaction
     		transaction.commit();
-    		}
+    		
     	}
     	
     	mDrawerLayout.closeDrawer(mDrawerList);
     }
 
-
+    public void onArticleSelected(int position)
+    {
+    	//Given position from rewards menu, create the proper coin fragment or certificate fragment. 
+    	//If coin fragment, pass int for choice of coin layout.
+    	
+    	//User has picked a coin
+    	if (position < CertificateFragment.POSITION)
+    	{
+    		//Create coin fragment and put it in content
+    		CoinFragment coinfrag = new CoinFragment();
+    		Bundle args = new Bundle();
+    		args.putInt("coinchoice", position);
+    		coinfrag.setArguments(args);
+    		FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+    		
+    		//Replace and add to back stack
+    		transaction.replace(R.id.content_frame, coinfrag);
+    		transaction.addToBackStack(null);
+    		
+    		transaction.commit();
+    	}
+    	//User has picked certificate
+    	else if (position == CertificateFragment.POSITION)
+    	{
+    		//Create certificate fragment and put it in content
+    		CertificateFragment certfrag = new CertificateFragment();
+    		FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+    		
+    		//Replace and add to back stack
+    		transaction.replace(R.id.content_frame, certfrag);
+    		transaction.addToBackStack(null);
+    		
+    		transaction.commit();
+    		
+    	}
+    }
     @Override
     public void setTitle(CharSequence title) {
         mTitle = title;
