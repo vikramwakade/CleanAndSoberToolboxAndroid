@@ -16,6 +16,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteQueryBuilder;
 
 import com.osu.cleanandsobertoolboxandroid.MessageDbContract.*;
 
@@ -72,8 +73,16 @@ public class MessageDataSource {
 		    JSONObject structure = jObject.getJSONObject("structure");
 		    JSONArray categories = structure.getJSONArray("list");
 		    
-		    InsertMessages(messages);
-		    InsertStructureEntries(categories, -1);
+		    // This will execute all the insert statements in a single transaction 
+		    // rather than creating a new transaction for every insert statement
+		    database.beginTransaction();
+		    try {
+			    InsertMessages(messages);
+			    InsertStructureEntries(categories, -1);
+			    database.setTransactionSuccessful();
+		    } finally {
+		    	database.endTransaction();
+		    }
 	    } catch (JSONException e) {
 			e.printStackTrace();
 		}
@@ -128,8 +137,8 @@ public class MessageDataSource {
 		    	
 		    	database.insert(StructureEntry.TABLE_NAME, null, values);
 		    	
-		    	// Recursively call InstertStructureEntries to insert the
-		    	// sub-categories within the current category
+		    	// Recursively call InstertStructureEntries to insert the sub-categories
+		    	// within the current category
 		    	if(type.equals("category")) {
 		    		InsertStructureEntries(category.getJSONArray("list"), id);
 		    	}
@@ -215,9 +224,32 @@ public class MessageDataSource {
 				mselection, mselectionArgs, null, null, null );
 		
 		if (c.moveToFirst()) {
-			message = c.getString(0) + "\n\n" + c.getString(1) + "\n\n" + c.getString(2);
+			message = c.getString(1) + "<br><br>" + c.getString(2);
 		}
 		
 		return message;
+	}
+	
+	public Cursor getWordMatches(String query, String[] columns) {
+	    String selection = MessageEntry.COLUMN_NAME_MESSAGE + " MATCH ?";
+	    String[] selectionArgs = new String[] {query+"*"};
+
+	    return query(selection, selectionArgs, columns);
+	}
+
+	private Cursor query(String selection, String[] selectionArgs, String[] columns) {
+	    SQLiteQueryBuilder builder = new SQLiteQueryBuilder();
+	    builder.setTables(MessageEntry.TABLE_NAME);
+
+	    Cursor cursor = builder.query(database,
+	            columns, selection, selectionArgs, null, null, null);
+
+	    if (cursor == null) {
+	        return null;
+	    } else if (!cursor.moveToFirst()) {
+	        cursor.close();
+	        return null;
+	    }
+	    return cursor;
 	}
 }
