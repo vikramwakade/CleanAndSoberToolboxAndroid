@@ -31,5 +31,7 @@
     <string name="icondescription">These are icons of coin images.</string>
     <string name="reward_title">Rewards</string>
     <string name="coinfragdesc">This is a layout for the coin view.</string>
+    <string name="todo">TODO</string>
+    <string name="ok">OK</string>
 
 </resources>

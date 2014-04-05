@@ -6,6 +6,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
+import android.app.ActionBar;
+import android.app.DialogFragment;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
@@ -14,7 +16,6 @@ import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.FragmentActivity;
-import android.app.ListFragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
 import android.telephony.TelephonyManager;
@@ -25,7 +26,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.SearchView;
@@ -40,6 +40,7 @@ public class MainActivity extends FragmentActivity
 	implements onCategorySelectedListener ,RewardsFragment.onArticleSelectedListener {
 
 	public final static String EXTRA_MESSAGE = "com.example.cbt.DONATION";
+	public final static String HELP_MESSAGE = "com.example.cbt.HELP";
 	public final static String DAYS_SOBER = "DAYS_SOBER";
 
 	SharedPreferences prefs = null;
@@ -60,6 +61,7 @@ public class MainActivity extends FragmentActivity
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		//requestWindowFeature(Window.FEATURE_CUSTOM_TITLE);
 		setContentView(R.layout.all_categories);
 
 		// Create an ad.
@@ -100,9 +102,19 @@ public class MainActivity extends FragmentActivity
 		// Set the list's click listener
         mDrawerList.setOnItemClickListener(new DrawerItemClickListener());		
  
+        ActionBar temp = getActionBar();
+        if (temp != null) {
+        	Log.i("INFO", "Action bar is not null");
+        } else {
+        	Log.i("INFO", "Action bar is null");
+        }
+       // getActionBar().setCustomView(R.layout.custom_title);
+       // getActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM |
+       // 		ActionBar.DISPLAY_SHOW_HOME | ActionBar.DISPLAY_HOME_AS_UP);
         // enable ActionBar app icon to behave as action to toggle nav drawer
         getActionBar().setDisplayHomeAsUpEnabled(true);
         getActionBar().setHomeButtonEnabled(true);
+        //getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE, R.layout.custom_title);
 
         mDrawerToggle = new ActionBarDrawerToggle(
                 this,                  /* host Activity */
@@ -146,6 +158,8 @@ public class MainActivity extends FragmentActivity
         // Add the fragment to the 'fragment_container' FrameLayout
         getSupportFragmentManager().beginTransaction()
                 .add(R.id.content_frame, firstFragment).commit();
+        
+        
 	}
 
 	@Override
@@ -299,7 +313,7 @@ public class MainActivity extends FragmentActivity
 
 	        // Commit the transaction
 	        transaction.commit();
-    	} else if (position == 1){
+    	} else if (position == 1){		// Donation Position in Navigation Drawer
     		Toast.makeText(this,  " selected", Toast.LENGTH_LONG).show();
     		Log.i("Info", ""+position);
     		Intent intent = new Intent(this, PaypalDonation.class);
@@ -386,12 +400,21 @@ public class MainActivity extends FragmentActivity
     public boolean onOptionsItemSelected(MenuItem item) {
         // Pass the event to ActionBarDrawerToggle, if it returns
         // true, then it has handled the app icon touch event
-        if (mDrawerToggle.onOptionsItemSelected(item)) {
-          return true;
-        }
-        // Handle your other action bar items...
-
-        return super.onOptionsItemSelected(item);
+    	switch(item.getItemId()) {
+    		case R.id.help:
+    			//Toast.makeText(this,  " Help Selected", Toast.LENGTH_LONG).show();
+    			DialogFragment diaFragment = HelpDialogFragment.newInstance(0);
+    			diaFragment.show(getFragmentManager(), HELP_MESSAGE);
+    			return true;
+    		//break;
+    		default:
+    			if (mDrawerToggle.onOptionsItemSelected(item)) {
+    		          return true;
+    		        }
+    		        // Handle your other action bar items...
+    			return super.onOptionsItemSelected(item);
+    	}
+        
     }
     
     @Override
