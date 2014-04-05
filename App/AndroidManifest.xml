@@ -82,7 +82,7 @@
         <!-- Splash Screen -->
         <activity
             android:name="com.osu.cleanandsobertoolboxandroid.SplashScreenActivity"
-            android:label="@string/app_label"
+            android:label="@string/app_name"
             android:screenOrientation="portrait"
             android:theme="@android:style/Theme.Black.NoTitleBar" >
 >
