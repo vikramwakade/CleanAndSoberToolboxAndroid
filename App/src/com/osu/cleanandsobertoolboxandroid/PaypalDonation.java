@@ -23,10 +23,10 @@ public class PaypalDonation extends Activity {
 	// set to PaymentActivity.ENVIRONMENT_PRODUCTION to move real money.
     // set to PaymentActivity.ENVIRONMENT_SANDBOX to use your test credentials from https://developer.paypal.com
     // set to PaymentActivity.ENVIRONMENT_NO_NETWORK to kick the tires without communicating to PayPal's servers.
-    private static final String CONFIG_ENVIRONMENT = PaymentActivity.ENVIRONMENT_NO_NETWORK;
+    private static final String CONFIG_ENVIRONMENT = PaymentActivity.ENVIRONMENT_SANDBOX;
     
 	// note that these credentials will differ between live & sandbox environments.
-    private static final String CONFIG_CLIENT_ID = "credential from developer.paypal.com"; //"credential-from-developer.paypal.com"
+    private static final String CONFIG_CLIENT_ID = "AToYtBCmDFosxUa5Ryu-wQjX-M3TlZceA453V7JpiOpJdnei6KxG8kjyhFmO"; //"credential-from-developer.paypal.com"
     
     private EditText donationAmt;
 	@Override
@@ -83,7 +83,7 @@ public class PaypalDonation extends Activity {
 			    // such as an email address or user ID.
 			    intent.putExtra(PaymentActivity.EXTRA_PAYER_ID, "<someuser@somedomain.com>");
 		
-			    intent.putExtra(PaymentActivity.EXTRA_RECEIVER_EMAIL, "<YOUR_PAYPAL_EMAIL_ADDRESS>");
+			    intent.putExtra(PaymentActivity.EXTRA_RECEIVER_EMAIL, "thugenberg-facilitator@yahoo.com");
 			    intent.putExtra(PaymentActivity.EXTRA_PAYMENT, payment);
 		
 			    startActivityForResult(intent, 0);

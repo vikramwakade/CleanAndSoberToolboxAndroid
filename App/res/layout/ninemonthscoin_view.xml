@@ -6,6 +6,5 @@ android:id="@+id/imageView8"
     android:layout_height="fill_parent"
     android:layout_alignParentLeft="true"
     android:layout_alignParentTop="true"
-    android:scaleType="fitXY"
 	android:src="@drawable/ninemonthscoin" >
 </ImageView>

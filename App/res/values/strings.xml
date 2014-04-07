@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">CleanAndSoberToolboxAndroid</string>
+    <string name="app_name">C&amp;S Toolbox</string>
     <string name="action_settings">Settings</string>
 
     <string-array name="drawer_array">
@@ -9,10 +9,9 @@
         <item>Donate</item>
         <item>Psychology</item>
         <item>Notifications</item>
-        <item>Certificate</item>
-        <item>View Coin</item>
+        <item>Rewards</item>
     </string-array>
-
+    
     <string name="drawer_open">Open navigation drawer</string>
     <string name="drawer_close">Close navigation drawer</string>
     <string name="action_websearch">Web search</string>
@@ -29,5 +28,10 @@
     <string name="title_activity_certificate_fragment">CertificateFragment</string>
     <string name="certdescription">This is an image of a certificate for using the app for 1 year.</string>
     <string name="coindescription">This is an image of a coin for using the app for different lengths of time.</string>
+    <string name="icondescription">These are icons of coin images.</string>
+    <string name="reward_title">Rewards</string>
+    <string name="coinfragdesc">This is a layout for the coin view.</string>
+    <string name="todo">TODO</string>
+    <string name="ok">OK</string>
 
 </resources>

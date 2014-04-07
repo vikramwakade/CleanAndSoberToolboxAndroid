@@ -5,52 +5,53 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.content.SharedPreferences;
 
 public class CoinFragment extends Fragment {
-	
-	SharedPreferences prefs = null;
-    final String DAYS_SOBER = "DAYS_SOBER";
-    final static int position = 5;
+
     
+
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, 
 	        Bundle savedInstanceState) {
-		//Get sharedprefs to check days
-		prefs = this.getActivity().getSharedPreferences("com.osu.cleanandsobertoolboxaround",0);
-		int days = prefs.getInt(DAYS_SOBER, 1);
+		
+		//Get arguments
+		Bundle args = getArguments();
+		
+		//Grab int
+		int coinchoice = args.getInt("coinchoice");
+		
+		//Initialize layout choice
 		int layout = 0;
 		
-		//Check how many days it has been, display correct coin
-		if((days >= 7) && (days < 30))
-		{
+		//Check which coin it should be, display correct coin
+		switch(coinchoice){
+		case 0:
 			layout = R.layout.sevendayscoin_view;
-		}
-		else if ((days >= 30) && (days < 60))
-		{
+			break;
+		case 1:
 			layout = R.layout.thirtydayscoin_view;
-		}
-		else if ((days >= 60) && (days < 90))
-		{
+			break;
+		case 2:
 			layout = R.layout.sixtydayscoin_view;
-		}
-		else if ((days >= 90) && (days < 180))
-		{
+			break;
+		case 3:
 			layout = R.layout.ninetydayscoin_view;
-		}
-		//Can't really check what months they are, just do 180 days for 6 months
-		else if ((days >= 180) && (days < 274)){
+			break;
+		case 4:
 			layout = R.layout.sixmonthscoin_view;
-		}
-		//274 days is about 9 months
-		else if ((days >= 274) && (days < 365))
-		{
+			break;
+		case 5:
 			layout = R.layout.ninemonthscoin_view;
-		}
-		else if (days >= 365)
-		{
+			break;
+		case 6:
 			layout = R.layout.yearcoin_view;
+			break;
+		default:
+			break;
 		}
+			
 		// Inflate the layout for this fragment with whichever coin is correct
         return inflater.inflate(layout, container, false);
 		
