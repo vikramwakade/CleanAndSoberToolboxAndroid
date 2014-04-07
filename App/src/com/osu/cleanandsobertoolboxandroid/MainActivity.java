@@ -7,7 +7,9 @@ import java.util.Date;
 import java.util.Locale;
 
 import android.app.ActionBar;
+import android.app.AlarmManager;
 import android.app.DialogFragment;
+import android.app.PendingIntent;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
@@ -175,6 +177,7 @@ public class MainActivity extends FragmentActivity
 		// the string representation of date (month/day/year)
 		DateFormat df = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss", Locale.US);
 		
+		//prefs.edit().putInt(DAYS_SOBER, 28).commit();
 		days = prefs.getInt(DAYS_SOBER, 1);
 		//Check if this is the first time the app is run
 		if (prefs.getBoolean("firstrun", true) == true) {
@@ -187,7 +190,7 @@ public class MainActivity extends FragmentActivity
 			//Set prefs for this being first date app is used
 			prefs.edit().putString("LAST_USED", todaysDate).commit();
 			prefs.edit().putBoolean("firstrun", false).commit();
-			prefs.edit().putInt(DAYS_SOBER, days).commit();
+			prefs.edit().putInt(DAYS_SOBER, 1).commit();
 		} else {
 			//Check how many days it has been since last use
 
@@ -209,7 +212,8 @@ public class MainActivity extends FragmentActivity
 			long diff = today_date.getTime() - last_date.getTime();
 		    long diffHours= diff / (60 * 60 * 1000);
 		    
-		    if (diffHours > 24){
+		    
+		    if (diffHours >= 24){
 		    	//Different day, add a day to user's time
 				days++;
 		
@@ -217,6 +221,39 @@ public class MainActivity extends FragmentActivity
 				prefs.edit().putString("LAST_USED", todaysDate).commit();
 				prefs.edit().putInt(DAYS_SOBER, days).commit();
 		    }
+		}
+		
+		//Check if a notification needs to be sent out telling user to come back to the app and get a new coin or the certificate
+		if ((days == 6)||(days == 29) || (days == 59) || (days == 89) || (days == 179) || (days == 273) || (days == 364))
+		{
+			//Construct and schedule notification for next day
+			
+			//Start by creating alarm that will start activity to create a notification
+			
+			//Get calendar
+			Calendar calendar = Calendar.getInstance();
+			calendar.setTimeInMillis(System.currentTimeMillis());
+			
+			//Add a day to date
+			calendar.add(Calendar.HOUR_OF_DAY,24);
+			
+			//Retrieve AlarmManager from system
+			AlarmManager alarmManager = (AlarmManager)getApplicationContext().getSystemService(getBaseContext().ALARM_SERVICE);
+			
+			//Create alarm id
+			int id = (int) System.currentTimeMillis();
+			
+			//Prepare intent
+			Intent intent = new Intent(this, AlarmReceiver.class);
+			
+			intent.putExtra("NotificationType", 0);
+			intent.putExtra("Days", days);
+			
+			//Prepare PendingIntent
+			PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(),id, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+			
+			//Register alarm in system
+			alarmManager.set(AlarmManager.RTC, calendar.getTimeInMillis(), pendingIntent);
 		}
 	}
 

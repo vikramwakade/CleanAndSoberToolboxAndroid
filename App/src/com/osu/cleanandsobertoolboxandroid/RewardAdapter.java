@@ -125,12 +125,24 @@ public class RewardAdapter extends ArrayAdapter<RewardRowItem>{
 			}
 		
 			if (this.isEnabled(position) == false){
-				convertView.setAlpha(75); 
-				convertView.setBackgroundColor(Color.GRAY);
+				//convertView.setAlpha(75); 
+				//convertView.setBackgroundColor(Color.GRAY);
+				//Set text and image to grey and opaque
+				TextView text = (TextView)convertView.findViewById(R.id.rewardtext);
+				ImageView image = (ImageView)convertView.findViewById(R.id.rewardicon);
+				
+				text.setTextColor(Color.GRAY);
+				image.setAlpha(128);
 			}
 			else if (this.isEnabled(position) == true){
-				convertView.setAlpha(255);
-				convertView.setBackgroundColor(Color.WHITE);
+				//convertView.setAlpha(255);
+				//convertView.setBackgroundColor(Color.WHITE);
+				//Set text and image to black and normal
+				TextView text = (TextView)convertView.findViewById(R.id.rewardtext);
+				ImageView image = (ImageView)convertView.findViewById(R.id.rewardicon);
+				
+				text.setTextColor(Color.BLACK);
+				image.setAlpha(255);
 			}
 		return convertView;
 	}

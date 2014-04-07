@@ -20,7 +20,7 @@
     <string name="donation_amt">Donation Amt:  $</string>
     <string name="title_activity_splash_screen">SplashScreen</string>
     <string name="buy">Buy a thing</string>
-    <string name="push_notifications">Would you like to receive push notifications?</string>
+    <string name="push_notifications">Would you like to receive daily notifications?</string>
     <string name="app_label">Clean and Sober Toolbox</string>
     <string name="search_hint">Type a few words here to describe your issue or feelings.</string>
     <string name="action_search">Search</string>

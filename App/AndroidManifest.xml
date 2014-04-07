@@ -29,6 +29,8 @@
     <uses-feature
         android:name="android.hardware.camera.flash"
         android:required="false" />
+    
+  
 
     <application
         android:allowBackup="true"
@@ -39,6 +41,9 @@
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
 
+         <!--  Receiver -->
+    	<receiver android:name="com.osu.cleanandsobertoolboxandroid.AlarmReceiver"/>
+    	
         <activity
             android:name="com.osu.cleanandsobertoolboxandroid.MainActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
