@@ -16,7 +16,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteQueryBuilder;
 
 import com.osu.cleanandsobertoolboxandroid.MessageDbContract.*;
 
@@ -171,13 +170,10 @@ public class MessageDataSource {
 				StructureEntry.COLUMN_NAME_TYPE
 		};
 		
-		String selection = StructureEntry.COLUMN_NAME_PARENT_ID + "=?";
-		String[] selectionArgs = {
-				Integer.toString(parentId)
-		};
+		String selection = StructureEntry.COLUMN_NAME_PARENT_ID + " = " + parentId;
 		
 		Cursor c = database.query( StructureEntry.TABLE_NAME, projection,
-				selection, selectionArgs, null, null, null );
+				selection, null, null, null, null );
 		
 		if (c.moveToFirst()) {
 			do {
@@ -189,13 +185,10 @@ public class MessageDataSource {
 					String[] mprojection = {
 							MessageEntry.COLUMN_NAME_TITLE
 					};
-					String mselection = MessageEntry.COLUMN_NAME_ENTRY_ID + "=?";
-					String[] mselectionArgs = {
-							Integer.toString(c.getInt(0))
-					};
+					String mselection = MessageEntry.COLUMN_NAME_ENTRY_ID + " = " + c.getInt(0);
 					
 					Cursor m_c = database.query( MessageEntry.TABLE_NAME, mprojection,
-							mselection, mselectionArgs, null, null, null );
+							mselection, null, null, null, null );
 					
 					if (m_c.moveToFirst()) {
 						categories.add(new Category(c.getInt(0), m_c.getString(0), type));
@@ -215,13 +208,10 @@ public class MessageDataSource {
 				MessageEntry.COLUMN_NAME_MESSAGE,
 				MessageEntry.COLUMN_NAME_TODO
 		};
-		String mselection = MessageEntry.COLUMN_NAME_ENTRY_ID + "=?";
-		String[] mselectionArgs = {
-				Integer.toString(messageId)
-		};
+		String mselection = MessageEntry.COLUMN_NAME_ENTRY_ID + " = " + messageId;
 		
 		Cursor c = database.query( MessageEntry.TABLE_NAME, mprojection,
-				mselection, mselectionArgs, null, null, null );
+				mselection, null, null, null, null );
 		
 		if (c.moveToFirst()) {
 			message = c.getString(1) + "<br><br>" + c.getString(2);
@@ -230,26 +220,40 @@ public class MessageDataSource {
 		return message;
 	}
 	
-	public Cursor getWordMatches(String query, String[] columns) {
-	    String selection = MessageEntry.COLUMN_NAME_MESSAGE + " MATCH ?";
-	    String[] selectionArgs = new String[] {query+"*"};
-
-	    return query(selection, selectionArgs, columns);
-	}
-
-	private Cursor query(String selection, String[] selectionArgs, String[] columns) {
-	    SQLiteQueryBuilder builder = new SQLiteQueryBuilder();
-	    builder.setTables(MessageEntry.TABLE_NAME);
-
-	    Cursor cursor = builder.query(database,
-	            columns, selection, selectionArgs, null, null, null);
-
-	    if (cursor == null) {
-	        return null;
-	    } else if (!cursor.moveToFirst()) {
-	        cursor.close();
-	        return null;
+	public List<Category> getQueryMatches(String query) {
+		String[] mprojection = {
+				MessageEntry.COLUMN_NAME_ENTRY_ID,
+				MessageEntry.COLUMN_NAME_TITLE,
+				MessageEntry.COLUMN_NAME_MESSAGE
+		};
+	    String mselection = MessageEntry.COLUMN_NAME_MESSAGE + " MATCH '" + query + "'";
+	    
+	    Cursor mcursor = database.query( MessageEntry.TABLE_NAME, mprojection, 
+	    		mselection, null, null, null, null );
+	    
+	    List<Category> categories = new ArrayList<Category>();
+	    if (mcursor.moveToFirst()) {
+	    	do {
+	    		categories.add(new Category(mcursor.getInt(0), mcursor.getString(1), "content"));
+	    	} while (mcursor.moveToNext());
 	    }
-	    return cursor;
+	    
+	    String[] projection = {
+				StructureEntry.COLUMN_NAME_ENTRY_ID,
+				StructureEntry.COLUMN_NAME_TITLE,
+				StructureEntry.COLUMN_NAME_TYPE
+		};
+		
+		String selection = StructureEntry.COLUMN_NAME_TITLE + " MATCH '" + query + "'";
+		
+		Cursor scursor = database.query( StructureEntry.TABLE_NAME, projection, 
+	    		selection, null, null, null, null );
+		if (scursor.moveToFirst()) {
+	    	do {
+	    		categories.add(new Category(scursor.getInt(0), scursor.getString(1), scursor.getString(2)));
+	    	} while (scursor.moveToNext());
+	    }
+	    
+	    return categories;
 	}
 }
