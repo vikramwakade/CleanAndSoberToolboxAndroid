@@ -1,10 +1,8 @@
 package com.osu.cleanandsobertoolboxandroid;
 
 import android.content.Context;
-import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.database.sqlite.SQLiteQueryBuilder;
 
 import com.osu.cleanandsobertoolboxandroid.MessageDbContract.*;
 
@@ -18,7 +16,7 @@ public class MessageReaderDbHelper extends SQLiteOpenHelper {
     private static final String COMMA_SEP = ",";
     
     private static final String SQL_CREATE_STRUCTURE = 
-		"CREATE TABLE " + StructureEntry.TABLE_NAME + " (" +
+		"CREATE VIRTUAL TABLE " + StructureEntry.TABLE_NAME + " USING fts3(" +
 			StructureEntry._ID + " INTEGER PRIMARY KEY," +
 			StructureEntry.COLUMN_NAME_ENTRY_ID + INTEGER_TYPE + COMMA_SEP +
 			StructureEntry.COLUMN_NAME_PARENT_ID + INTEGER_TYPE + COMMA_SEP +
@@ -27,7 +25,7 @@ public class MessageReaderDbHelper extends SQLiteOpenHelper {
 	        " )";
     
     private static final String SQL_CREATE_MESSAGES = 
-    	"CREATE TABLE " + MessageEntry.TABLE_NAME + " (" +
+    	"CREATE VIRTUAL TABLE " + MessageEntry.TABLE_NAME + " USING fts3(" +
 	    	MessageEntry._ID + " INTEGER PRIMARY KEY," +
 	    	MessageEntry.COLUMN_NAME_ENTRY_ID + INTEGER_TYPE + COMMA_SEP +
 	    	MessageEntry.COLUMN_NAME_TITLE + TEXT_TYPE + COMMA_SEP +
