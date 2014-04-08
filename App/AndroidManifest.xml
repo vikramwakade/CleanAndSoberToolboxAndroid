@@ -29,6 +29,8 @@
     <uses-feature
         android:name="android.hardware.camera.flash"
         android:required="false" />
+    
+  
 
     <application
         android:allowBackup="true"
@@ -41,7 +43,9 @@
 		<meta-data
                 android:name="android.app.default_searchable"
                 android:value=".SearchActivity" />
-		
+         <!--  Receiver -->
+    	<receiver android:name="com.osu.cleanandsobertoolboxandroid.AlarmReceiver"/>
+    	
         <activity
             android:name="com.osu.cleanandsobertoolboxandroid.MainActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
