@@ -76,6 +76,7 @@ public class AlarmReceiver extends BroadcastReceiver {
 			Calendar calendar = Calendar.getInstance();
 			int id = (int) System.currentTimeMillis();
 			
+			noti.setAutoCancel(true);
 			notManager.notify(id,noti.build());
 			
 		}
