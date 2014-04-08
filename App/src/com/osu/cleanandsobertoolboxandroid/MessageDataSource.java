@@ -230,6 +230,29 @@ public class MessageDataSource {
 		return message;
 	}
 	
+	public int getRandomIndex(){
+		int index = 0;
+
+		String rand = "RANDOM";
+		String one = "1";
+		String[] mprojection = {
+				MessageEntry.COLUMN_NAME_ENTRY_ID
+		};
+		
+		//Query db for random message index
+		Cursor mCur = database.query(MessageEntry.TABLE_NAME, mprojection, null, null, null, null, rand, one);
+		if (mCur != null)
+		{
+			mCur.moveToFirst();
+		}
+		
+		//Should only be one column with one row
+		index=mCur.getInt(0);
+		
+		
+		return index;
+	}
+	
 	public Cursor getWordMatches(String query, String[] columns) {
 	    String selection = MessageEntry.COLUMN_NAME_MESSAGE + " MATCH ?";
 	    String[] selectionArgs = new String[] {query+"*"};

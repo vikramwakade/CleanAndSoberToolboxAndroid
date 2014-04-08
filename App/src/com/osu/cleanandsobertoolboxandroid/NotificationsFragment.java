@@ -1,10 +1,19 @@
 package com.osu.cleanandsobertoolboxandroid;
 
+import java.util.Calendar;
+
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.ComponentName;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ToggleButton;
 
 public class NotificationsFragment extends Fragment {
 	int curPosition = -1;
@@ -16,9 +25,18 @@ public class NotificationsFragment extends Fragment {
         
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.notifications_layout, container, false);
-		
+
 	}
 	
+//	@Override
+//	public void onCreate (Bundle savedInstanceState)
+//	{
+//		super.onCreate(savedInstanceState);
+//		
+//		//Set toggle button based on shared prefs
+//		SharedPreferences prefs = getSharedPreferences("com.osu.cleanandsobertoolboxandroid", MODE_PRIVATE);
+//		
+//		
+//	}
 	
-
 }

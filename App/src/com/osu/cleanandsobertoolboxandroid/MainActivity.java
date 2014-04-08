@@ -11,9 +11,11 @@ import android.app.AlarmManager;
 import android.app.DialogFragment;
 import android.app.PendingIntent;
 import android.app.SearchManager;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
@@ -32,6 +34,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdSize;
@@ -170,6 +173,52 @@ public class MainActivity extends FragmentActivity
 		if (adView != null) {
 			adView.resume();
 		}
+		//Check if app is starting from a notification - open up a message or open up rewards menu
+		if (this.getIntent().getIntExtra("FromNotification", 0) == 1)
+		{
+			//App is launching from a rewards notification - open the Reward menu fragment
+			
+			//Create RewardsMenu fragment
+    		RewardsFragment rewardfrag = new RewardsFragment();
+    		FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+    		
+    		// Replace whatever is in the fragment_container view with this fragment,
+	        // and add the transaction to the back stack so the user can navigate back
+    		//transaction.replace(R.id.content_frame, rewardfrag);
+    		transaction.replace(R.id.content_frame, rewardfrag);
+    		transaction.addToBackStack(null);
+    		
+    		//Commit transaction
+    		transaction.commit();
+		}
+		
+		else if (this.getIntent().getIntExtra("FromNotification", 0) == 2)
+		{
+			//App is launching from a daily message notification - need to display a random message
+			MessageFragment messageFragment = new MessageFragment();
+    		
+    		Bundle args = new Bundle();
+    		
+    		//Get random entry from database
+    		MessageDataSource ds = new MessageDataSource(this);
+            ds.open();
+            
+            //Get random index from db
+            int index = ds.getRandomIndex();
+            
+            ds.close();
+            
+            //Use the index we just got to open up a random message
+    		args.putInt(MessageFragment.CONTENT_ID, index );
+    		messageFragment.setArguments(args);
+
+    		FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+    		transaction.replace(R.id.content_frame, messageFragment);
+    		transaction.addToBackStack(null);
+
+    		// Commit the transaction
+    		transaction.commit();
+		}
 
 		//Get prefs
 		prefs = getSharedPreferences("com.osu.cleanandsobertoolboxandroid", MODE_PRIVATE);
@@ -177,7 +226,7 @@ public class MainActivity extends FragmentActivity
 		// the string representation of date (month/day/year)
 		DateFormat df = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss", Locale.US);
 		
-		//prefs.edit().putInt(DAYS_SOBER, 28).commit();
+		
 		days = prefs.getInt(DAYS_SOBER, 1);
 		//Check if this is the first time the app is run
 		if (prefs.getBoolean("firstrun", true) == true) {
@@ -224,21 +273,14 @@ public class MainActivity extends FragmentActivity
 		}
 		
 		//Check if a notification needs to be sent out telling user to come back to the app and get a new coin or the certificate
-		if ((days == 6)||(days == 29) || (days == 59) || (days == 89) || (days == 179) || (days == 273) || (days == 364))
+		if ((days == 2)||(days == 29) || (days == 59) || (days == 89) || (days == 179) || (days == 273) || (days == 364))
 		{
 			//Construct and schedule notification for next day
 			
 			//Start by creating alarm that will start activity to create a notification
-			
-			//Get calendar
-			Calendar calendar = Calendar.getInstance();
-			calendar.setTimeInMillis(System.currentTimeMillis());
-			
-			//Add a day to date
-			calendar.add(Calendar.HOUR_OF_DAY,24);
-			
+
 			//Retrieve AlarmManager from system
-			AlarmManager alarmManager = (AlarmManager)getApplicationContext().getSystemService(getBaseContext().ALARM_SERVICE);
+			AlarmManager alarmManager = (AlarmManager)getApplicationContext().getSystemService(Context.ALARM_SERVICE);
 			
 			//Create alarm id
 			int id = (int) System.currentTimeMillis();
@@ -252,9 +294,11 @@ public class MainActivity extends FragmentActivity
 			//Prepare PendingIntent
 			PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(),id, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 			
-			//Register alarm in system
-			alarmManager.set(AlarmManager.RTC, calendar.getTimeInMillis(), pendingIntent);
+			//Register alarm in system, it will be sent in roughly a day
+			alarmManager.set(AlarmManager.ELAPSED_REALTIME, AlarmManager.INTERVAL_DAY, pendingIntent);
 		}
+		
+		
 	}
 
 	@Override
@@ -337,6 +381,7 @@ public class MainActivity extends FragmentActivity
 	        // Commit the transaction
 	        transaction.commit();
     	}
+    	//Notifications menu
     	else if(position == NotificationsFragment.POSITION)
     	{
     		NotificationsFragment frag = new NotificationsFragment();
@@ -350,7 +395,65 @@ public class MainActivity extends FragmentActivity
 
 	        // Commit the transaction
 	        transaction.commit();
-    	} else if (position == 1){		// Donation Position in Navigation Drawer
+	        
+	      //Change toggle button settings
+    		//Check saved state of toggle
+    		boolean toggle = prefs.getBoolean("Toggle", false);
+    		
+    		//Retrieve AlarmManager from system
+    		AlarmManager alarmManager = (AlarmManager)getApplicationContext().getSystemService(Context.ALARM_SERVICE);
+    		
+    		//Create intent and pending intent
+    		//Create alarm id
+    		int id = (int) System.currentTimeMillis();
+    				
+    		//Prepare intent
+    		Intent intent = new Intent(this, AlarmReceiver.class);
+    				
+    		//Set mode of notification
+    		intent.putExtra("NotificationType", 1);
+    				
+    		//Create pending intent (Need to do it here because we have to have the intent to cancel it too)
+    		PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(),id, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+    		
+    		if (toggle == true)
+    		{
+    			//Toggle is set on
+    			ToggleButton button = (ToggleButton)findViewById(R.id.toggleButton1);
+    			button.setChecked(true);
+    			
+    			//Schedule repeating alarm
+    			
+    			//Enable boot receiver
+    			ComponentName receiver = new ComponentName(this, AlarmReceiver.class);
+    			PackageManager pm = this.getPackageManager();
+
+    			pm.setComponentEnabledSetting(receiver,
+    			        PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
+    			        PackageManager.DONT_KILL_APP);
+    			
+    			//Register alarm in system
+    			alarmManager.set(AlarmManager.ELAPSED_REALTIME, AlarmManager.INTERVAL_DAY, pendingIntent);
+    		}
+    		else if (toggle == false)
+    		{
+    			//Toggle is set off
+    			
+    			//Disable boot receiver
+    			ComponentName receiver = new ComponentName(this, AlarmReceiver.class);
+    			PackageManager pm = this.getPackageManager();
+
+    			pm.setComponentEnabledSetting(receiver,
+    			        PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
+    			        PackageManager.DONT_KILL_APP);
+    			
+    			//Cancel alarm
+    			alarmManager.cancel(pendingIntent);
+    		
+    		}
+    	} 
+    	//PayPal
+    	else if (position == 1){		// Donation Position in Navigation Drawer
     		Toast.makeText(this,  " selected", Toast.LENGTH_LONG).show();
     		Log.i("Info", ""+position);
     		Intent intent = new Intent(this, PaypalDonation.class);
@@ -358,6 +461,7 @@ public class MainActivity extends FragmentActivity
     		intent.putExtra(EXTRA_MESSAGE, message);
     		startActivity(intent);
     	}
+    	//Rewards Menu
     	else if (position == RewardsFragment.position)
     	{
     		//Create RewardsMenu fragment
@@ -399,20 +503,7 @@ public class MainActivity extends FragmentActivity
     		
     		transaction.commit();
     	}
-    	//User has picked certificate
-    	else if (position == CertificateFragment.POSITION)
-    	{
-    		//Create certificate fragment and put it in content
-    		CertificateFragment certfrag = new CertificateFragment();
-    		FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-    		
-    		//Replace and add to back stack
-    		transaction.replace(R.id.content_frame, certfrag);
-    		transaction.addToBackStack(null);
-    		
-    		transaction.commit();
-    		
-    	}
+    	
     }
     @Override
     public void setTitle(CharSequence title) {
@@ -484,5 +575,28 @@ public class MainActivity extends FragmentActivity
     		transaction.commit();
     	}
     }
+    
+    //Handle toggle button on Notifications Fragment
+    public void onToggleClicked (View view)
+	{
+    	//Check if toggle is on
+		boolean on = ((ToggleButton) view).isChecked();
+
+		if (on)
+		{
+			//Save toggle state in shared prefs
+			prefs.edit().putBoolean("Toggle", true).commit();
+		}
+		
+		else
+		{
+			//Save toggle state in shared prefs
+			//Save toggle state
+			prefs.edit().putBoolean("Toggle", false).commit();
+			
+		}
+		
+
+	}
     
 }

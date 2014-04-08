@@ -18,31 +18,33 @@ public class AlarmReceiver extends BroadcastReceiver {
 		//Request Notification Manager
 		NotificationManager notManager = (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
 		
-		//Create intent for notification
-		Intent intent = new Intent(context, MainActivity.class);
-		
-		//Create PendingIntent for Notification
-		PendingIntent pIntent = PendingIntent.getActivity(context, 0 ,intent, 0);
 		
 		//Get extras from param intent
 		int type = paramIntent.getIntExtra("NotificationType", 1);
 		int days = paramIntent.getIntExtra("Days", 7);
 		
-		//Create taskstackbuilder (need this for daily message)
-		TaskStackBuilder taskBuilder = TaskStackBuilder.create(context);
 		
 		//Create Notification Builder
 		NotificationCompat.Builder noti = new NotificationCompat.Builder(context);
 		
 		if (type == 0)
 		{
+			//Create intent for notification
+			Intent intent = new Intent(context, MainActivity.class);
+			
+			//Add int extra for letting main activity know it's starting from notification
+			intent.putExtra("FromNotification", 1);
+			
+			//Create PendingIntent for Notification
+			PendingIntent pIntent = PendingIntent.getActivity(context, 0 ,intent, 0);
+			
 			//This is a notification for the user receiving a new coin/certificate
 			noti.setContentTitle("Receive your reward!");
 			
 			//Check number of days, use appropriate coin as image
 			switch(days)
 			{
-			case 6:
+			case 2:
 				noti.setSmallIcon(R.drawable.sevendaysicon);
 				break;
 			case 29:
@@ -66,14 +68,13 @@ public class AlarmReceiver extends BroadcastReceiver {
 				
 			}
 			//Text of notification
-			noti.setContentText("Congratulations, you've received a new reward! Please visit the app to see your new reward!");
-			//noti.addAction(R.drawable.ic_launcher, "View Rewards", pIntent);
+			noti.setContentText("Congratulations, you've received a new reward!");
+			
 			noti.setContentIntent(pIntent);
 			
 			//Send notification with unique id
 			//Get current time to generate id
-			//Get calendar
-			Calendar calendar = Calendar.getInstance();
+
 			int id = (int) System.currentTimeMillis();
 			
 			noti.setAutoCancel(true);
@@ -84,6 +85,27 @@ public class AlarmReceiver extends BroadcastReceiver {
 		else if (type == 1)
 		{
 			//This is a daily message notification
+			noti.setContentTitle("Your daily message");
+			noti.setAutoCancel(true);
+			
+			int id = (int)System.currentTimeMillis();
+			
+			//Set text
+			noti.setContentText("View your daily message!");
+			
+			//Create intent for notification
+			Intent intent2 = new Intent(context, MainActivity.class);
+			
+			//Add special check to intent so that main activity knows what to do
+			intent2.putExtra("FromNotification", 2);
+			
+			//Create PendingIntent for Notification
+			PendingIntent pIntent2 = PendingIntent.getActivity(context, 0 ,intent2, 0);
+			
+			//Set intent
+			noti.setContentIntent(pIntent2);
+			
+			notManager.notify(id,noti.build());
 		}
 	}
 
