@@ -5,6 +5,8 @@ import android.support.v4.app.Fragment;
 import android.text.Html;
 import android.text.method.ScrollingMovementMethod;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -15,6 +17,13 @@ public class NavigationMessageFragment extends Fragment{
 	final static String DISCLAIMER = "disclaimer";
 	int curPosition = -1;
 
+	@Override
+    public void onCreate(Bundle savedInstanceState) {
+    	super.onCreate(savedInstanceState);
+    	setHasOptionsMenu(true);
+    	((MainActivity) getActivity()).setActionBarTitle("Your title");
+    }
+	
 	@Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, 
         Bundle savedInstanceState) {
@@ -65,4 +74,20 @@ public class NavigationMessageFragment extends Fragment{
         outState.putInt(DISCLAIMER, curPosition);
     }
     
+	@Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+
+        MenuItem helpItem  = menu.findItem(R.id.help);
+        helpItem.setVisible(false);
+        
+        MenuItem searchItem  = menu.findItem(R.id.search);
+        searchItem.setVisible(false);
+    }
+
+	@Override
+	public void onResume() {
+		super.onResume();
+		((MainActivity) getActivity()).setActionBarTitle("Your title");
+	}
 }

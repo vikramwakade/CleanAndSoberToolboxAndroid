@@ -3,6 +3,8 @@ package com.osu.cleanandsobertoolboxandroid;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
@@ -47,6 +49,7 @@ public class RewardsFragment extends ListFragment
     @Override
     public void onCreate(Bundle savedInstanceState){
     	super.onCreate(savedInstanceState);
+    	setHasOptionsMenu(true);
     	
     	//Get data
     	int i = 0;
@@ -77,6 +80,15 @@ public class RewardsFragment extends ListFragment
        mCallback.onArticleSelected(position);
     }
    
-   
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+
+        MenuItem helpItem  = menu.findItem(R.id.help);
+        helpItem.setVisible(false);
+        
+        MenuItem searchItem  = menu.findItem(R.id.search);
+        searchItem.setVisible(false);
+    }
 
 }

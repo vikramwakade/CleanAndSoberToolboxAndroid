@@ -5,6 +5,8 @@ import android.support.v4.app.Fragment;
 import android.text.Html;
 import android.text.method.ScrollingMovementMethod;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -14,6 +16,12 @@ public class MessageFragment extends Fragment {
 
     int currentContentId = -1;
     MessageDataSource ds;
+    
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+    	super.onCreate(savedInstanceState);
+    	setHasOptionsMenu(true);
+    }
     
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, 
@@ -70,5 +78,13 @@ public class MessageFragment extends Fragment {
 
         // Save the current article selection in case we need to recreate the fragment
         outState.putInt(CONTENT_ID, currentContentId);
+    }
+    
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+
+        MenuItem item  = menu.findItem(R.id.help);
+        item.setVisible(false);
     }
 }

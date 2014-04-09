@@ -11,11 +11,9 @@ import android.app.AlarmManager;
 import android.app.DialogFragment;
 import android.app.PendingIntent;
 import android.app.SearchManager;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
@@ -62,6 +60,8 @@ public class MainActivity extends FragmentActivity
  
     /* Your ad unit id. Replace with your actual ad unit id. */
     private static final String AD_UNIT_ID = "INSERT_YOUR_AD_UNIT_ID_HERE";
+    public static final String HELP_INDEX = "INDEX";
+    public static SharedPreferences help_message_index = null;
     
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -69,6 +69,9 @@ public class MainActivity extends FragmentActivity
 		//requestWindowFeature(Window.FEATURE_CUSTOM_TITLE);
 		setContentView(R.layout.all_categories);
 
+		help_message_index = getSharedPreferences("com.osu.cleanandsobertoolboxandroid", MODE_PRIVATE);
+		help_message_index.edit().putInt(MainActivity.HELP_INDEX, 0).commit();
+		
 		// Create an ad.
 	    adView = new AdView(this);
 	    adView.setAdSize(AdSize.BANNER);
@@ -490,7 +493,7 @@ public class MainActivity extends FragmentActivity
     	switch(item.getItemId()) {
     		case R.id.help:
     			//Toast.makeText(this,  " Help Selected", Toast.LENGTH_LONG).show();
-    			DialogFragment diaFragment = HelpDialogFragment.newInstance(0);
+    			DialogFragment diaFragment = HelpDialogFragment.newInstance(help_message_index.getInt(HELP_INDEX, 1));
     			diaFragment.show(getFragmentManager(), HELP_MESSAGE);
     			return true;
     		//break;
@@ -614,8 +617,10 @@ public class MainActivity extends FragmentActivity
 			//Change alarm time in shared prefs for recovery to 0
 			prefs.edit().putLong("DailyNoteTime", 0).commit();
 		}
-		
-
 	}
+    
+    public void setActionBarTitle(String title){
+    	getActionBar().setTitle(title);
+    }    
     
 }
