@@ -173,55 +173,10 @@ public class MainActivity extends FragmentActivity
 		if (adView != null) {
 			adView.resume();
 		}
-		//Check if app is starting from a notification - open up a message or open up rewards menu
-		if (this.getIntent().getIntExtra("FromNotification", 0) == 1)
-		{
-			//App is launching from a rewards notification - open the Reward menu fragment
-			
-			//Create RewardsMenu fragment
-    		RewardsFragment rewardfrag = new RewardsFragment();
-    		FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-    		
-    		// Replace whatever is in the fragment_container view with this fragment,
-	        // and add the transaction to the back stack so the user can navigate back
-    		//transaction.replace(R.id.content_frame, rewardfrag);
-    		transaction.replace(R.id.content_frame, rewardfrag);
-    		transaction.addToBackStack(null);
-    		
-    		//Commit transaction
-    		transaction.commit();
-		}
 		
-		else if (this.getIntent().getIntExtra("FromNotification", 0) == 2)
-		{
-			//App is launching from a daily message notification - need to display a random message
-			MessageFragment messageFragment = new MessageFragment();
-    		
-    		Bundle args = new Bundle();
-    		
-    		//Get random entry from database
-    		MessageDataSource ds = new MessageDataSource(this);
-            ds.open();
-            
-            //Get random index from db
-            int index = ds.getRandomIndex();
-            
-            ds.close();
-            
-            //Use the index we just got to open up a random message
-    		args.putInt(MessageFragment.CONTENT_ID, index );
-    		messageFragment.setArguments(args);
-
-    		FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-    		transaction.replace(R.id.content_frame, messageFragment);
-    		transaction.addToBackStack(null);
-
-    		// Commit the transaction
-    		transaction.commit();
-		}
-
 		//Get prefs
 		prefs = getSharedPreferences("com.osu.cleanandsobertoolboxandroid", MODE_PRIVATE);
+
 		// Create an instance of SimpleDateFormat used for formatting 
 		// the string representation of date (month/day/year)
 		DateFormat df = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss", Locale.US);
@@ -272,15 +227,75 @@ public class MainActivity extends FragmentActivity
 		    }
 		}
 		
+		//Check if app is starting from a notification - open up a message or open up rewards menu
+		int prefstart = prefs.getInt("FromNotification", 0);
+		if (prefstart == 1)
+		{
+			//App is launching from a rewards notification - open the Reward menu fragment
+			
+			//Create RewardsMenu fragment
+    		RewardsFragment rewardfrag = new RewardsFragment();
+    		FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+    		
+    		// Replace whatever is in the fragment_container view with this fragment,
+	        // and add the transaction to the back stack so the user can navigate back
+    		//transaction.replace(R.id.content_frame, rewardfrag);
+    		transaction.replace(R.id.content_frame, rewardfrag);
+    		transaction.addToBackStack(null);
+    		
+    		//Replace prefstart in prefs so that it doesn't repeat this
+    		prefs.edit().putInt("FromNotification", 0).commit();
+    		
+    		//Commit transaction
+    		transaction.commit();
+		}
+		
+		else if (prefstart == 2)
+		{
+			//App is launching from a daily message notification - need to display a random message
+			MessageFragment messageFragment = new MessageFragment();
+    		
+    		Bundle args = new Bundle();
+    		
+    		//Get random entry from database
+    		MessageDataSource ds = new MessageDataSource(this);
+            ds.open();
+            
+            //Get random index from db
+            int index = ds.getRandomIndex();
+            
+            ds.close();
+            
+            //Use the index we just got to open up a random message
+    		args.putInt(MessageFragment.CONTENT_ID, index );
+    		messageFragment.setArguments(args);
+
+    		FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+    		transaction.replace(R.id.content_frame, messageFragment);
+    		transaction.addToBackStack(null);
+
+    		//Replace prefstart in prefs so that it doesn't repeat this
+    		prefs.edit().putInt("FromNotification", 0).commit();
+    		
+    		// Commit the transaction
+    		transaction.commit();
+		}
+		
 		//Check if a notification needs to be sent out telling user to come back to the app and get a new coin or the certificate
-		if ((days == 2)||(days == 29) || (days == 59) || (days == 89) || (days == 179) || (days == 273) || (days == 364))
+		if ((days == 6)||(days == 29) || (days == 59) || (days == 89) || (days == 179) || (days == 273) || (days == 364))
 		{
 			//Construct and schedule notification for next day
-			
+			Calendar calendar = Calendar.getInstance();
+			calendar.setTimeInMillis(System.currentTimeMillis());
+			calendar.add(Calendar.HOUR, 24);
+
 			//Start by creating alarm that will start activity to create a notification
 
+			//Set sharedpref so that alarm manager can know to recreate alarm when device boots off
+			prefs.edit().putLong("CoinAlarmTime", System.currentTimeMillis()).commit();
+			
 			//Retrieve AlarmManager from system
-			AlarmManager alarmManager = (AlarmManager)getApplicationContext().getSystemService(Context.ALARM_SERVICE);
+			AlarmManager alarmManager = (AlarmManager)getApplicationContext().getSystemService(getBaseContext().ALARM_SERVICE);
 			
 			//Create alarm id
 			int id = (int) System.currentTimeMillis();
@@ -295,7 +310,7 @@ public class MainActivity extends FragmentActivity
 			PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(),id, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 			
 			//Register alarm in system, it will be sent in roughly a day
-			alarmManager.set(AlarmManager.ELAPSED_REALTIME, AlarmManager.INTERVAL_DAY, pendingIntent);
+			alarmManager.set(AlarmManager.RTC, calendar.getTimeInMillis(), pendingIntent);
 		}
 		
 		
@@ -352,8 +367,8 @@ public class MainActivity extends FragmentActivity
         //update the main content by replacing fragments
         //TODO:
         //mDrawerLayout.closeDrawer(mDrawerList);
-    	Toast.makeText(this,  " selected", Toast.LENGTH_LONG).show();
-    	Log.i("Info", ""+position);
+    	//Toast.makeText(this,  " selected", Toast.LENGTH_LONG).show();
+    	//Log.i("Info", ""+position);
     	if (position == NavigationMessageFragment.disclaimer || position == NavigationMessageFragment.psychology) {
     		NavigationMessageFragment frag = new NavigationMessageFragment();
     		Bundle args = new Bundle();
@@ -401,7 +416,7 @@ public class MainActivity extends FragmentActivity
     		boolean toggle = prefs.getBoolean("Toggle", false);
     		
     		//Retrieve AlarmManager from system
-    		AlarmManager alarmManager = (AlarmManager)getApplicationContext().getSystemService(Context.ALARM_SERVICE);
+    		AlarmManager alarmManager = (AlarmManager)getApplicationContext().getSystemService(getBaseContext().ALARM_SERVICE);
     		
     		//Create intent and pending intent
     		//Create alarm id
@@ -425,30 +440,30 @@ public class MainActivity extends FragmentActivity
     			//Schedule repeating alarm
     			
     			//Enable boot receiver
-    			ComponentName receiver = new ComponentName(this, AlarmReceiver.class);
-    			PackageManager pm = this.getPackageManager();
-
-    			pm.setComponentEnabledSetting(receiver,
-    			        PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
-    			        PackageManager.DONT_KILL_APP);
+//    			ComponentName receiver = new ComponentName(this, AlarmReceiver.class);
+//    			PackageManager pm = this.getPackageManager();
+//
+//    			pm.setComponentEnabledSetting(receiver,
+//    			        PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
+//    			        PackageManager.DONT_KILL_APP);
     			
     			//Register alarm in system
     			alarmManager.set(AlarmManager.ELAPSED_REALTIME, AlarmManager.INTERVAL_DAY, pendingIntent);
     		}
-    		else if (toggle == false)
+    		//else if ((toggle == false) && (prefs.getBoolean("firstrun", true) == false))
     		{
     			//Toggle is set off
     			
     			//Disable boot receiver
-    			ComponentName receiver = new ComponentName(this, AlarmReceiver.class);
-    			PackageManager pm = this.getPackageManager();
-
-    			pm.setComponentEnabledSetting(receiver,
-    			        PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
-    			        PackageManager.DONT_KILL_APP);
+//    			ComponentName receiver = new ComponentName(this, AlarmReceiver.class);
+//    			PackageManager pm = this.getPackageManager();
+//
+//    			pm.setComponentEnabledSetting(receiver,
+//    			        PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
+//    			        PackageManager.DONT_KILL_APP);
     			
     			//Cancel alarm
-    			alarmManager.cancel(pendingIntent);
+    			//alarmManager.cancel(pendingIntent);
     		
     		}
     	} 

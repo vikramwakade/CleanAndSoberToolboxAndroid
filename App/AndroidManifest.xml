@@ -48,10 +48,10 @@
                 android:value=".SearchActivity" />
          <!--  Receiver -->
     	<receiver android:name="com.osu.cleanandsobertoolboxandroid.AlarmReceiver"
-    	    android:enabled="false">
-    	    <intent-filter>
-       		 <action android:name="android.intent.action.BOOT_COMPLETED"></action>
-    		</intent-filter>
+				>			    	    
+<!--     	    <intent-filter> -->
+<!--        		 <action android:name="android.intent.action.BOOT_COMPLETED"></action> -->
+<!--     		</intent-filter> -->
     	</receiver>
         <activity
             android:name="com.osu.cleanandsobertoolboxandroid.MainActivity"

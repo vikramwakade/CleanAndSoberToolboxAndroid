@@ -28,15 +28,5 @@ public class NotificationsFragment extends Fragment {
 
 	}
 	
-//	@Override
-//	public void onCreate (Bundle savedInstanceState)
-//	{
-//		super.onCreate(savedInstanceState);
-//		
-//		//Set toggle button based on shared prefs
-//		SharedPreferences prefs = getSharedPreferences("com.osu.cleanandsobertoolboxandroid", MODE_PRIVATE);
-//		
-//		
-//	}
 	
 }
