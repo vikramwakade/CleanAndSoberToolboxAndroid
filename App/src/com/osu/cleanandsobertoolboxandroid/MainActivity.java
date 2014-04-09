@@ -282,7 +282,7 @@ public class MainActivity extends FragmentActivity
 		}
 		
 		//Check if a notification needs to be sent out telling user to come back to the app and get a new coin or the certificate
-		if ((days == 2)||(days == 29) || (days == 59) || (days == 89) || (days == 179) || (days == 273) || (days == 364))
+		if ((days == 6)||(days == 29) || (days == 59) || (days == 89) || (days == 179) || (days == 273) || (days == 364))
 		{
 			//Construct and schedule notification for next day
 			Calendar calendar = Calendar.getInstance();
@@ -555,7 +555,7 @@ public class MainActivity extends FragmentActivity
 		intent.putExtra("NotificationType", 1);
 				
 		//Create pending intent (Need to do it here because we have to have the intent to cancel it too)
-		PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(),id, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+		PendingIntent pendingIntent = PendingIntent.getBroadcast(this,id, intent, 0);
 		
 		//Need to set alarm only if button is toggled and button hasn't been toggled already
 		if ((on) && (prefs.getBoolean("Toggle", false) == false))
@@ -577,11 +577,13 @@ public class MainActivity extends FragmentActivity
 		
 		//If button is off and it's not first time and the button was previously toggled true (an alarm was set)
 		// We need to cancel the alarm
-		else if ((on == false) && (prefs.getBoolean("firstrun", true) == false) && (prefs.getBoolean("Toggle", false) == true))
+		else if ((on == false)  && (prefs.getBoolean("Toggle", false) == true))
 		{
 			//Save toggle state in shared prefs
 			//Save toggle state
 			prefs.edit().putBoolean("Toggle", false).commit();
+			
+			pendingIntent.cancel();
 			
 			//Cancel alarm
 			alarmManager.cancel(pendingIntent);

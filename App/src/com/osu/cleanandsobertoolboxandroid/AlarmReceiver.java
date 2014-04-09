@@ -35,9 +35,19 @@ public class AlarmReceiver extends BroadcastReceiver {
 		if (type == 0)
 		{
 
+			//This is a notification for the user receiving a new coin/certificate
+			noti.setContentTitle("Receive your reward!");
+			
 			//Add int extra for letting main activity know it's starting from notification
 			//intent.putExtra("FromNotification", 1);
 			prefs.edit().putInt("FromNotification", 1).commit();
+			
+			//Send notification with unique id
+			//Get current time to generate id
+			int id = (int) System.currentTimeMillis();
+			
+			//Text of notification
+			noti.setContentText("Congratulations, you've received a new reward!");
 			
 			//Create intent for notification
 			Intent intent = new Intent(context, MainActivity.class);
@@ -48,13 +58,11 @@ public class AlarmReceiver extends BroadcastReceiver {
 			//Set intent for notification
 			noti.setContentIntent(pIntent);
 
-			//This is a notification for the user receiving a new coin/certificate
-			noti.setContentTitle("Receive your reward!");
 			
 			//Check number of days, use appropriate coin as image
 			switch(days)
 			{
-			case 2:
+			case 6:
 				noti.setSmallIcon(R.drawable.sevendaysicon);
 				break;
 			case 29:
@@ -77,12 +85,7 @@ public class AlarmReceiver extends BroadcastReceiver {
 				break;
 				
 			}
-			//Text of notification
-			noti.setContentText("Congratulations, you've received a new reward!");
-
-			//Send notification with unique id
-			//Get current time to generate id
-			int id = (int) System.currentTimeMillis();
+			
 			
 			noti.setAutoCancel(true);
 			notManager.notify(id,noti.build());
@@ -93,16 +96,15 @@ public class AlarmReceiver extends BroadcastReceiver {
 		{
 			//This is a daily message notification
 			noti.setContentTitle("Your daily message");
-			noti.setAutoCancel(true);
+			
+			//Add special check to intent so that main activity knows what to do
+			prefs.edit().putInt("FromNotification", 2).commit();
 			
 			//Get current time to generate id
 			int id = (int)System.currentTimeMillis();
 			
 			//Set text
 			noti.setContentText("View your daily message!");
-			
-			//Add special check to intent so that main activity knows what to do
-			prefs.edit().putInt("FromNotification", 2).commit();
 					
 			//Create intent for notification
 			Intent intent2 = new Intent(context, MainActivity.class);
@@ -112,6 +114,9 @@ public class AlarmReceiver extends BroadcastReceiver {
 			
 			//Set intent for notification
 			noti.setContentIntent(pIntent2);
+			
+			//Set an icon
+			noti.setSmallIcon(R.drawable.ic_launcher);
 			
 			noti.setAutoCancel(true);
 			notManager.notify(id,noti.build());

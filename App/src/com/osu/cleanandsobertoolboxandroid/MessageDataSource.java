@@ -231,7 +231,7 @@ public class MessageDataSource {
 		};
 		
 		//Query db for random message index
-		Cursor mCur = database.query(MessageEntry.TABLE_NAME, mprojection, null, null, null, null, rand, one);
+		Cursor mCur = database.rawQuery("SELECT identifier FROM messages ORDER BY RANDOM() LIMIT 1", null);
 		if (mCur != null)
 		{
 			mCur.moveToFirst();
