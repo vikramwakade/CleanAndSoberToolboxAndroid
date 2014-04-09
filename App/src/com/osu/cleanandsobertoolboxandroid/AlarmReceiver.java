@@ -1,8 +1,6 @@
 package com.osu.cleanandsobertoolboxandroid;
 
-import java.util.Calendar;
 
-import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
@@ -10,8 +8,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.v4.app.NotificationCompat;
-import android.support.v4.app.TaskStackBuilder;
-import android.widget.Toast;
+
+
 
 public class AlarmReceiver extends BroadcastReceiver {
 	@Override
@@ -21,13 +19,6 @@ public class AlarmReceiver extends BroadcastReceiver {
 		//Open prefs to add things
 		SharedPreferences prefs = context.getSharedPreferences("com.osu.cleanandsobertoolboxandroid", 0);
 				
-//		if (paramIntent.getAction().equals("android.intent.action.BOOT_COMPLETED")) {
-//            //Reset alarms because device booted off and on
-//			
-//        }
-
-//		else
-		{
 		//Request Notification Manager
 		NotificationManager notManager = (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
 		
@@ -39,15 +30,7 @@ public class AlarmReceiver extends BroadcastReceiver {
 		
 		//Create Notification Builder
 		NotificationCompat.Builder noti = new NotificationCompat.Builder(context);
-		
-		//Create intent for notification
-		Intent intent = new Intent(context, MainActivity.class);
-		
-		//Create PendingIntent for Notification
-		PendingIntent pIntent = PendingIntent.getActivity(context, 0 ,intent, 0);
-		
-		//Set intent for notification
-		noti.setContentIntent(pIntent);
+	
 		
 		if (type == 0)
 		{
@@ -56,6 +39,14 @@ public class AlarmReceiver extends BroadcastReceiver {
 			//intent.putExtra("FromNotification", 1);
 			prefs.edit().putInt("FromNotification", 1).commit();
 			
+			//Create intent for notification
+			Intent intent = new Intent(context, MainActivity.class);
+			
+			//Create PendingIntent for Notification
+			PendingIntent pIntent = PendingIntent.getActivity(context, 0 ,intent, 0);
+			
+			//Set intent for notification
+			noti.setContentIntent(pIntent);
 
 			//This is a notification for the user receiving a new coin/certificate
 			noti.setContentTitle("Receive your reward!");
@@ -63,7 +54,7 @@ public class AlarmReceiver extends BroadcastReceiver {
 			//Check number of days, use appropriate coin as image
 			switch(days)
 			{
-			case 6:
+			case 2:
 				noti.setSmallIcon(R.drawable.sevendaysicon);
 				break;
 			case 29:
@@ -113,12 +104,19 @@ public class AlarmReceiver extends BroadcastReceiver {
 			//Add special check to intent so that main activity knows what to do
 			prefs.edit().putInt("FromNotification", 2).commit();
 					
-			//Set intent
-			noti.setContentIntent(pIntent);
+			//Create intent for notification
+			Intent intent2 = new Intent(context, MainActivity.class);
 			
+			//Create PendingIntent for Notification
+			PendingIntent pIntent2 = PendingIntent.getActivity(context, 0 ,intent2, 0);
+			
+			//Set intent for notification
+			noti.setContentIntent(pIntent2);
+			
+			noti.setAutoCancel(true);
 			notManager.notify(id,noti.build());
 		}
 	}
-	}
+	
 
 }

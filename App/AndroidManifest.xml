@@ -49,9 +49,12 @@
          <!--  Receiver -->
     	<receiver android:name="com.osu.cleanandsobertoolboxandroid.AlarmReceiver"
 				>			    	    
-<!--     	    <intent-filter> -->
-<!--        		 <action android:name="android.intent.action.BOOT_COMPLETED"></action> -->
-<!--     		</intent-filter> -->
+    	</receiver>
+    	<receiver android:name="com.osu.cleanandsobertoolboxnadroid.BootReceiver"
+    	    >
+    	    <intent-filter>
+    	        <action android:name="android.intent.action.BOOT_COMPLETED"></action>
+    	     </intent-filter>
     	</receiver>
         <activity
             android:name="com.osu.cleanandsobertoolboxandroid.MainActivity"
