@@ -295,7 +295,7 @@ public class MainActivity extends FragmentActivity
 			//Start by creating alarm that will start activity to create a notification
 
 			//Set sharedpref so that alarm manager can know to recreate alarm when device boots off
-			prefs.edit().putLong("CoinAlarmTime", System.currentTimeMillis()).commit();
+			prefs.edit().putLong("CoinAlarmTime", calendar.getTimeInMillis() ).commit();
 			
 			//Retrieve AlarmManager from system
 			AlarmManager alarmManager = (AlarmManager)getApplicationContext().getSystemService(getBaseContext().ALARM_SERVICE);
@@ -413,62 +413,6 @@ public class MainActivity extends FragmentActivity
 
 	        // Commit the transaction
 	        transaction.commit();
-	        
-	      //Change toggle button settings
-    		//Check saved state of toggle
-    		boolean toggle = prefs.getBoolean("Toggle", false);
-    		
-    		//Retrieve AlarmManager from system
-    		AlarmManager alarmManager = (AlarmManager)getApplicationContext().getSystemService(getBaseContext().ALARM_SERVICE);
-    		
-    		//Create intent and pending intent
-    		//Create alarm id
-    		int id = (int) System.currentTimeMillis();
-    				
-    		//Prepare intent
-    		Intent intent = new Intent(this, AlarmReceiver.class);
-    				
-    		//Set mode of notification
-    		intent.putExtra("NotificationType", 1);
-    				
-    		//Create pending intent (Need to do it here because we have to have the intent to cancel it too)
-    		PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(),id, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-    		
-    		if (toggle == true)
-    		{
-    			//Toggle is set on
-    			ToggleButton button = (ToggleButton)findViewById(R.id.toggleButton1);
-    			button.setChecked(true);
-    			
-    			//Schedule repeating alarm
-    			
-    			//Enable boot receiver
-//    			ComponentName receiver = new ComponentName(this, AlarmReceiver.class);
-//    			PackageManager pm = this.getPackageManager();
-//
-//    			pm.setComponentEnabledSetting(receiver,
-//    			        PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
-//    			        PackageManager.DONT_KILL_APP);
-    			
-    			//Register alarm in system
-    			alarmManager.set(AlarmManager.ELAPSED_REALTIME, AlarmManager.INTERVAL_DAY, pendingIntent);
-    		}
-    		//else if ((toggle == false) && (prefs.getBoolean("firstrun", true) == false))
-    		{
-    			//Toggle is set off
-    			
-    			//Disable boot receiver
-//    			ComponentName receiver = new ComponentName(this, AlarmReceiver.class);
-//    			PackageManager pm = this.getPackageManager();
-//
-//    			pm.setComponentEnabledSetting(receiver,
-//    			        PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
-//    			        PackageManager.DONT_KILL_APP);
-    			
-    			//Cancel alarm
-    			//alarmManager.cancel(pendingIntent);
-    		
-    		}
     	} 
     	//PayPal
     	else if (position == 1){		// Donation Position in Navigation Drawer
@@ -600,18 +544,78 @@ public class MainActivity extends FragmentActivity
     	//Check if toggle is on
 		boolean on = ((ToggleButton) view).isChecked();
 
-		if (on)
+		
+		//Need to set alarm only if button is toggled and button hasn't been toggled already
+		if ((on) && (prefs.getBoolean("Toggle", false) == false))
 		{
+			Calendar calendar = Calendar.getInstance();
+			calendar.setTimeInMillis(System.currentTimeMillis());
+			calendar.add(Calendar.HOUR, 24);
+			
+			//Retrieve AlarmManager from system
+			AlarmManager alarmManager = (AlarmManager)getApplicationContext().getSystemService(getBaseContext().ALARM_SERVICE);
+			
+			//Create intent and pending intent
+			//Create alarm id
+			int id = (int) System.currentTimeMillis();
+			
+			//Need to save this id in sharedprefs so alarm can be deleted
+			prefs.edit().putInt("DailyId", id).commit();
+					
+			//Prepare intent
+			Intent intent = new Intent(this, AlarmReceiver.class);
+					
+			//Set mode of notification
+			intent.putExtra("NotificationType", 1);
+					
+			//Create pending intent (Need to do it here because we have to have the intent to cancel it too)
+			PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(),id, intent, 0);
+			
 			//Save toggle state in shared prefs
 			prefs.edit().putBoolean("Toggle", true).commit();
+			
+			//Save alarm time in shared prefs for recovery
+			prefs.edit().putLong("DailyNoteTime", calendar.getTimeInMillis()).commit();
+			
+    		//Register alarm in system
+			alarmManager.setRepeating(AlarmManager.RTC, calendar.getTimeInMillis(), AlarmManager.INTERVAL_DAY, pendingIntent);
+    		
 		}
 		
-		else
+		//If button is off  and the button was previously toggled true (an alarm was set)
+		// We need to cancel the alarm
+		else if ((on == false)  && (prefs.getBoolean("Toggle", false) == true))
 		{
 			//Save toggle state in shared prefs
 			//Save toggle state
 			prefs.edit().putBoolean("Toggle", false).commit();
 			
+			//Delete alarm
+			//Retrieve AlarmManager from system
+			AlarmManager alarmManager = (AlarmManager)getApplicationContext().getSystemService(getBaseContext().ALARM_SERVICE);
+			
+			//Get id from sharedprefs
+			int id = prefs.getInt("DailyId", 0);
+			
+			//Prepare intent
+			Intent intent = new Intent(this, AlarmReceiver.class);
+					
+			//Set mode of notification
+			intent.putExtra("NotificationType", 1);
+					
+			//Create pending intent (Need to do it here because we have to have the intent to cancel it too)
+			PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(),id, intent, 0);
+			
+			//Cancel intent
+			pendingIntent.cancel();
+			
+			//Cancel alarm
+			alarmManager.cancel(pendingIntent);
+
+			//Destroy alarm time int for id
+			prefs.edit().remove("DailyId").commit();
+			//Change alarm time in shared prefs for recovery to 0
+			prefs.edit().putLong("DailyNoteTime", 0).commit();
 		}
 	}
     
