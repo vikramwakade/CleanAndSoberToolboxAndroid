@@ -85,6 +85,7 @@ public class MessageFragment extends Fragment {
         super.onPrepareOptionsMenu(menu);
 
         MenuItem item  = menu.findItem(R.id.help);
-        item.setVisible(false);
+        if( item != null)
+        	item.setVisible(false);
     }
 }
