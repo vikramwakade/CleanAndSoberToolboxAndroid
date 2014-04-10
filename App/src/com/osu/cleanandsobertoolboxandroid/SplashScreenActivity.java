@@ -25,7 +25,7 @@ public class SplashScreenActivity extends Activity {
 	//Splash screen timer
 	private static int SPLASH_TIME_OUT = 3000;
 	String url = "http://www.cleanandsobertoolbox.com/";
-	String stringURLArray[] = {"disclaimer.json", "psychology.json"};
+	String stringURLArray[] = {"disclaimer.json", "psychology.json", "categories.json", "messages.json"};
 	
 	public static SharedPreferences navigationMessages = null;
 	
@@ -34,15 +34,16 @@ public class SplashScreenActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_splash_screen);
 		
-		navigationMessages= getSharedPreferences("com.osu.cleanandsobertoolboxandroid", MODE_PRIVATE);
+		navigationMessages = getSharedPreferences("com.osu.cleanandsobertoolboxandroid", MODE_PRIVATE);
+		
 		
         ConnectivityManager connMgr = (ConnectivityManager) 
             getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
         if (networkInfo != null && networkInfo.isConnected()) {
         	for(int i = 0; i<stringURLArray.length; ++i) {
-        		Log.i("SPLASH+INFO",url + stringURLArray[i]);
-        		new DownloadFileTask().execute(url+ stringURLArray[i]);
+        		Log.i("SPLASH+INFO", url + stringURLArray[i]);
+        		new DownloadFileTask().execute(url + stringURLArray[i]);
         	}
         } else {
         	Toast.makeText(this, "No network connection available.", Toast.LENGTH_LONG).show();
@@ -79,7 +80,6 @@ public class SplashScreenActivity extends Activity {
     	
     	@Override
     	protected void onPostExecute(String data) {
-    		// TODO: start the main app activity here
     		updateData(data);
     	}
     }
@@ -89,9 +89,9 @@ public class SplashScreenActivity extends Activity {
  	// a string.
  	private String downloadUrl(String myurl) throws IOException {
  	    InputStream is = null;
- 	    // Only display the first 500 characters of the retrieved
- 	    // web page content.
- 		int len = 500;
+ 	    
+ 	    // Buffer size of 1KB
+ 		int len = 1024;
  	  
  		try {
  			URL url = new URL(myurl);
@@ -133,14 +133,20 @@ public class SplashScreenActivity extends Activity {
  	}
  	
  	public void updateData(String text) {
- 		if(text.startsWith(url+stringURLArray[0])) {  //Disclaimer
+ 		if (text.startsWith(url+stringURLArray[0])) {  //Disclaimer
  			int urlLength = (url+stringURLArray[0]).length();
- 			//Toast.makeText(this, text.substring(urlLength), Toast.LENGTH_LONG).show();
  			navigationMessages.edit().putString(NavigationMessageFragment.KEY+'0', text.substring(urlLength)).commit();
- 		} else if(text.startsWith(url+stringURLArray[1])) {   // Psychology
+ 		} else if (text.startsWith(url+stringURLArray[1])) {   // Psychology
  			int urlLength = (url+stringURLArray[1]).length();
- 			//Toast.makeText(this, text.substring(urlLength), Toast.LENGTH_LONG).show();
  			navigationMessages.edit().putString(NavigationMessageFragment.KEY+'1', text.substring(urlLength)).commit();
+ 		} else if (text.startsWith(url+stringURLArray[2])) {	// Categories
+ 			int urlLength = (url+stringURLArray[2]).length();
+ 			navigationMessages.edit().putString("categories", text.substring(urlLength)).commit();
+ 			navigationMessages.edit().putBoolean("updateDb", true).commit();
+ 		} else if (text.startsWith(url+stringURLArray[3])) {	// Messages
+ 			int urlLength = (url+stringURLArray[3]).length();
+ 			navigationMessages.edit().putString("messages", text.substring(urlLength)).commit();
+ 			navigationMessages.edit().putBoolean("updateDb", true).commit();
  		}
  	}
 

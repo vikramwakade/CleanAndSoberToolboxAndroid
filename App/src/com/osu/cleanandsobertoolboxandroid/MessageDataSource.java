@@ -63,83 +63,93 @@ public class MessageDataSource {
 	    return result;
 	}
 	
-	// Populate the database from the JSON passed as string
-	public void PopulateDbFromJSON(String result) {
-	    try {
-	    	JSONObject jObject = new JSONObject(result);
-	    	
-		    JSONArray messages = jObject.getJSONArray("messages");
-		    JSONObject structure = jObject.getJSONObject("structure");
-		    JSONArray categories = structure.getJSONArray("list");
-		    
-		    // This will execute all the insert statements in a single transaction 
+	// Populate the database from the JSON objects passed as string
+	public void PopulateDb(String categories, String messages) {
+		try {
+			JSONArray jMessages = new JSONArray(messages);
+			JSONObject jCategories = new JSONObject(categories);
+			
+			// This will execute all the insert statements in a single transaction 
 		    // rather than creating a new transaction for every insert statement
 		    database.beginTransaction();
 		    try {
-			    InsertMessages(messages);
-			    InsertStructureEntries(categories, -1);
+			    InsertMessages(jMessages);
+			    InsertCategories(jCategories.getJSONArray("subcategories"), -1);
 			    database.setTransactionSuccessful();
 		    } finally {
 		    	database.endTransaction();
 		    }
-	    } catch (JSONException e) {
+		} catch (JSONException e) {
 			e.printStackTrace();
 		}
 	}
 	    
 	public void InsertMessages(JSONArray messages) {
 		try {    
-		    for (int i = 0; i < messages.length(); i++)
-		    {
+		    for (int i = 0; i < messages.length(); i++) {
 		    	ContentValues values = new ContentValues();
 		    	JSONObject message = messages.getJSONObject(i);
 		    	values.put(MessageEntry.COLUMN_NAME_ENTRY_ID, 
-		    			message.getInt("identifier"));
+		    			message.getInt("id"));
 		    	values.put(MessageEntry.COLUMN_NAME_TITLE,
 		    			message.getString("title"));
 		    	values.put(MessageEntry.COLUMN_NAME_MESSAGE,
-		    			message.getString("message"));
+		    			message.getString("content"));
 		    	values.put(MessageEntry.COLUMN_NAME_TODO,
 		    			message.getString("todo"));
 		    	
 		    	// Insert the new row, returning the primary key value of the new row
-			    database.insert(
-			    		MessageEntry.TABLE_NAME,
-			    		null,
-			    		values);
+		    	database.insert(
+		    			MessageEntry.TABLE_NAME,
+		    			null,
+		    			values);
 		    }
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
 	}
 	
-	public void InsertStructureEntries(JSONArray categories, int parent) {
+	public void InsertCategories(JSONArray categories, int parent) {
 		try {
-		    for(int i = 0; i < categories.length(); i++)
+			for(int i = 0; i < categories.length(); i++)
 		    {
 		    	ContentValues values = new ContentValues();
 		    	JSONObject category = categories.getJSONObject(i);
 		    	
-		    	int id = category.getInt("identifier");
+		    	int id = category.getInt("id");
 		    	values.put(StructureEntry.COLUMN_NAME_ENTRY_ID,
 		    			id);
 		    	values.put(StructureEntry.COLUMN_NAME_PARENT_ID,
 		    			parent);
-		    	String type = category.getString("type");
-		    	values.put(StructureEntry.COLUMN_NAME_TYPE, type);
-		    	if(type.equals("category")) {
-			    	values.put(StructureEntry.COLUMN_NAME_TITLE,
-			    			category.getString("title"));
-		    	} else {
-		    		values.putNull(StructureEntry.COLUMN_NAME_TITLE);
-		    	}
+		    	values.put(StructureEntry.COLUMN_NAME_TYPE,
+		    			category.getString("type"));
+		    	values.put(StructureEntry.COLUMN_NAME_TITLE,
+		    			category.getString("title"));
 		    	
 		    	database.insert(StructureEntry.TABLE_NAME, null, values);
 		    	
+		    	JSONArray messages = category.getJSONArray("messages");
+		    	if (messages.length() > 0) {
+		    		for (int j = 0; j < messages.length(); ++j) {
+		    			values.clear();
+		    			
+		    			values.put(StructureEntry.COLUMN_NAME_ENTRY_ID,
+		    					messages.getInt(j));
+		    			values.put(StructureEntry.COLUMN_NAME_PARENT_ID,
+		    					id);
+		    			values.put(StructureEntry.COLUMN_NAME_TYPE,
+		    					"content");
+		    			values.putNull(StructureEntry.COLUMN_NAME_TITLE);
+		    			
+		    			database.insert(StructureEntry.TABLE_NAME, null, values);
+		    		}
+		    	}
+		    	
+		    	JSONArray subcategories = category.getJSONArray("subcategories");
 		    	// Recursively call InstertStructureEntries to insert the sub-categories
 		    	// within the current category
-		    	if(type.equals("category")) {
-		    		InsertStructureEntries(category.getJSONArray("list"), id);
+		    	if(subcategories.length() > 0) {
+		    		InsertCategories(subcategories, id);
 		    	}
 		    }
 		} catch (JSONException e) {

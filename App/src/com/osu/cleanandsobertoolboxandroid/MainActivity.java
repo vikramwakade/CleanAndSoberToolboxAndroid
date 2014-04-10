@@ -141,9 +141,22 @@ public class MainActivity extends FragmentActivity
         if (!MessageDataSource.databaseExist(this, MessageReaderDbHelper.DATABASE_NAME)) {
 	        MessageDataSource ds = new MessageDataSource(this);
 	        ds.open();
-	        //ds.EmptyDb();
-	        String result = ds.ProcessJSONFile(R.raw.newest_cleaned_data2);
-	        ds.PopulateDbFromJSON(result);
+	        String messages = ds.ProcessJSONFile(R.raw.messages);
+	        String categories = ds.ProcessJSONFile(R.raw.categories);
+	        ds.PopulateDb(categories, messages);
+	        ds.close();
+        } else if (SplashScreenActivity.navigationMessages.getBoolean("updateDb", false)) {
+        	Toast.makeText(this, "Updating Database", Toast.LENGTH_LONG).show();
+        	MessageDataSource ds = new MessageDataSource(this);
+	        ds.open();
+	        String categories = SplashScreenActivity.navigationMessages.getString("categories", null);
+	        String messages = SplashScreenActivity.navigationMessages.getString("messages", null);
+	        if (categories != null && messages != null) {
+	        	ds.EmptyDb();
+	        	ds.PopulateDb(categories, messages);
+	        	SplashScreenActivity.navigationMessages.edit().putBoolean("updateDb", false).commit();
+	        	Toast.makeText(this, "Update finished", Toast.LENGTH_LONG).show();
+	        }
 	        ds.close();
         }
         
