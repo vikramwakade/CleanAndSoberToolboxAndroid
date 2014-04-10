@@ -67,7 +67,7 @@ public class NavigationMessageFragment extends Fragment{
 	public void updateMessageView(int position) {
 		TextView article = (TextView) getActivity().findViewById(R.id.message);
         article.setMovementMethod(new ScrollingMovementMethod());
-        String message = MainActivity.navigationMessages.getString(KEY+position, NavigationMessage[position]); 
+        String message = SplashScreenActivity.navigationMessages.getString(KEY+position, NavigationMessage[position]); 
         //article.setText(Html.fromHtml(Data.NavigationMessage[position]));
         article.setText(Html.fromHtml(message));
         curPosition = position;
@@ -96,6 +96,5 @@ public class NavigationMessageFragment extends Fragment{
 	@Override
 	public void onResume() {
 		super.onResume();
-		((MainActivity) getActivity()).setActionBarTitle("Your title");
 	}
 }

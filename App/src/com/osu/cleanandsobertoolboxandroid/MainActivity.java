@@ -63,7 +63,6 @@ public class MainActivity extends FragmentActivity
     public static final String HELP_INDEX = "INDEX";
     public static SharedPreferences help_message_index = null;
     
-    public static SharedPreferences navigationMessages = null;
     
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -74,7 +73,6 @@ public class MainActivity extends FragmentActivity
 		help_message_index = getSharedPreferences("com.osu.cleanandsobertoolboxandroid", MODE_PRIVATE);
 		help_message_index.edit().putInt(MainActivity.HELP_INDEX, 0).commit();
 		
-		navigationMessages= getSharedPreferences("com.osu.cleanandsobertoolboxandroid", MODE_PRIVATE);
 		
 		// Create an ad.
 	    adView = new AdView(this);
