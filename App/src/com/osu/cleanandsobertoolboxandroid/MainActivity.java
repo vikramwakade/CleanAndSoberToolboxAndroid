@@ -63,6 +63,7 @@ public class MainActivity extends FragmentActivity
     public static final String HELP_INDEX = "INDEX";
     public static SharedPreferences help_message_index = null;
     
+    
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -71,6 +72,7 @@ public class MainActivity extends FragmentActivity
 
 		help_message_index = getSharedPreferences("com.osu.cleanandsobertoolboxandroid", MODE_PRIVATE);
 		help_message_index.edit().putInt(MainActivity.HELP_INDEX, 0).commit();
+		
 		
 		// Create an ad.
 	    adView = new AdView(this);
@@ -110,19 +112,9 @@ public class MainActivity extends FragmentActivity
 		// Set the list's click listener
         mDrawerList.setOnItemClickListener(new DrawerItemClickListener());		
  
-        ActionBar temp = getActionBar();
-        if (temp != null) {
-        	Log.i("INFO", "Action bar is not null");
-        } else {
-        	Log.i("INFO", "Action bar is null");
-        }
-       // getActionBar().setCustomView(R.layout.custom_title);
-       // getActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM |
-       // 		ActionBar.DISPLAY_SHOW_HOME | ActionBar.DISPLAY_HOME_AS_UP);
         // enable ActionBar app icon to behave as action to toggle nav drawer
         getActionBar().setDisplayHomeAsUpEnabled(true);
         getActionBar().setHomeButtonEnabled(true);
-        //getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE, R.layout.custom_title);
 
         mDrawerToggle = new ActionBarDrawerToggle(
                 this,                  /* host Activity */
@@ -168,8 +160,6 @@ public class MainActivity extends FragmentActivity
         // Add the fragment to the 'fragment_container' FrameLayout
         getSupportFragmentManager().beginTransaction()
                 .add(R.id.content_frame, firstFragment).commit();
-        
-        
 	}
 
 	@Override
@@ -369,9 +359,6 @@ public class MainActivity extends FragmentActivity
 	}
 
     private void selectItem(int position) {
-        //update the main content by replacing fragments
-        //TODO:
-        //mDrawerLayout.closeDrawer(mDrawerList);
     	//Toast.makeText(this,  " selected", Toast.LENGTH_LONG).show();
     	//Log.i("Info", ""+position);
     	if (position == NavigationMessageFragment.disclaimer || position == NavigationMessageFragment.psychology) {
