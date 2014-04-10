@@ -11,11 +11,13 @@ import java.net.URL;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.widget.Toast;
 
 public class SplashScreenActivity extends Activity {
@@ -25,17 +27,23 @@ public class SplashScreenActivity extends Activity {
 	String url = "http://www.cleanandsobertoolbox.com/";
 	String stringURLArray[] = {"disclaimer.json", "psychology.json"};
 	
+	public static SharedPreferences navigationMessages = null;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_splash_screen);
 		
+		navigationMessages= getSharedPreferences("com.osu.cleanandsobertoolboxandroid", MODE_PRIVATE);
+		
         ConnectivityManager connMgr = (ConnectivityManager) 
             getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
         if (networkInfo != null && networkInfo.isConnected()) {
-        	for(int i = 0; i<stringURLArray.length; ++i)
-        		new DownloadFileTask().execute(url + stringURLArray[i]);
+        	for(int i = 0; i<stringURLArray.length; ++i) {
+        		Log.i("SPLASH+INFO",url + stringURLArray[i]);
+        		new DownloadFileTask().execute(url+ stringURLArray[i]);
+        	}
         } else {
         	Toast.makeText(this, "No network connection available.", Toast.LENGTH_LONG).show();
         }
@@ -125,15 +133,14 @@ public class SplashScreenActivity extends Activity {
  	}
  	
  	public void updateData(String text) {
- 		
  		if(text.startsWith(url+stringURLArray[0])) {  //Disclaimer
  			int urlLength = (url+stringURLArray[0]).length();
  			//Toast.makeText(this, text.substring(urlLength), Toast.LENGTH_LONG).show();
- 			MainActivity.navigationMessages.edit().putString(NavigationMessageFragment.KEY+'0', text.substring(urlLength));
+ 			navigationMessages.edit().putString(NavigationMessageFragment.KEY+'0', text.substring(urlLength)).commit();
  		} else if(text.startsWith(url+stringURLArray[1])) {   // Psychology
  			int urlLength = (url+stringURLArray[1]).length();
  			//Toast.makeText(this, text.substring(urlLength), Toast.LENGTH_LONG).show();
- 			MainActivity.navigationMessages.edit().putString(NavigationMessageFragment.KEY+'1', text.substring(urlLength));
+ 			navigationMessages.edit().putString(NavigationMessageFragment.KEY+'1', text.substring(urlLength)).commit();
  		}
  	}
 
