@@ -150,8 +150,10 @@ public class MainActivity extends FragmentActivity
 	        MessageDataSource ds = new MessageDataSource(this);
 	        ds.open();
 	        //ds.EmptyDb();
-	        String result = ds.ProcessJSONFile(R.raw.newest_cleaned_data2);
-	        ds.PopulateDbFromJSON(result);
+	        //String result = ds.ProcessJSONFile(R.raw.newest_cleaned_data2);
+	        String messages = ds.ProcessJSONFile(R.raw.messages);
+	        String categories = ds.ProcessJSONFile(R.raw.categories);
+	        ds.PopulateDb(categories, messages);
 	        ds.close();
         }
         
