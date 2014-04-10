@@ -7,7 +7,7 @@
     <string-array name="drawer_array">
         <item>Disclaimer</item>
         <item>Donate</item>
-        <item>Psychology</item>
+        <item>About the App</item>
         <item>Notifications</item>
         <item>Rewards</item>
     </string-array>
@@ -20,11 +20,10 @@
     <string name="donation_amt">Donation Amt:  $</string>
     <string name="title_activity_splash_screen">SplashScreen</string>
     <string name="buy">Buy a thing</string>
-    <string name="push_notifications">Would you like to receive daily notifications?</string>
+    <string name="notifications">Would you like to receive daily notifications?</string>
     <string name="app_label">Clean and Sober Toolbox</string>
     <string name="search_hint">Type a few words here to describe your issue or feelings.</string>
     <string name="action_search">Search</string>
-    <string name="hello_world">Hello world!</string>
     <string name="title_activity_certificate_fragment">CertificateFragment</string>
     <string name="certdescription">This is an image of a certificate for using the app for 1 year.</string>
     <string name="coindescription">This is an image of a coin for using the app for different lengths of time.</string>
