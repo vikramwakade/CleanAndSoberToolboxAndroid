@@ -49,7 +49,15 @@ public class NotificationsFragment extends Fragment {
     	//Set toggle button based on shared prefs
     	SharedPreferences prefs = getActivity().getSharedPreferences("com.osu.cleanandsobertoolboxandroid", 0);
     	
+    	boolean first = prefs.getBoolean("firstrun", false);
+    	
     	ToggleButton button = (ToggleButton)getView().findViewById(R.id.toggleButton1);
+    	
+    	//If app is on for first time, go ahead and switch button on to set alarm for notifications.
+    	if (first == true)
+    	{
+    		button.setChecked(true);
+    	}
     	
     	//Button should be on
     	if (prefs.getBoolean("Toggle", false) == true)
