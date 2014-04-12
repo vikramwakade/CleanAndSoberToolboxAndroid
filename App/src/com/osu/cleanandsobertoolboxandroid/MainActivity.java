@@ -129,7 +129,8 @@ public class MainActivity extends FragmentActivity
             }
 
             public void onDrawerOpened(View drawerView) {
-                getActionBar().setTitle("Days Sober: " + days);//(mDrawerTitle);
+                getActionBar().setTitle("App Days" +
+                		": " + days);//(mDrawerTitle);
                 invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
             }
         };
