@@ -6,6 +6,8 @@ import java.util.List;
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
@@ -26,6 +28,7 @@ public class CategoryFragment extends ListFragment {
 	@Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
         
         // If we're being restored from a previous state,
         // then we don't need to do anything and should return or else
@@ -99,4 +102,13 @@ public class CategoryFragment extends ListFragment {
         }
 	
 	}
+	
+	@Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+        
+        MenuItem searchItem = menu.findItem(R.id.search);
+        if (searchItem != null)
+        	searchItem.setVisible(false);
+    }
 }

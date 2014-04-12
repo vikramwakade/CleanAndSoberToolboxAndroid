@@ -2,9 +2,9 @@
 <resources>
 
     <string name="app_name">C&amp;S Toolbox</string>
-    <string name="action_settings">Settings</string>
 
     <string-array name="drawer_array">
+        <item>Search</item>
         <item>Disclaimer</item>
         <item>Donate</item>
         <item>About the App</item>
@@ -22,7 +22,7 @@
     <string name="buy">Buy a thing</string>
     <string name="notifications">Would you like to receive daily notifications?</string>
     <string name="app_label">Clean and Sober Toolbox</string>
-    <string name="search_hint">Type a few words here to describe your issue or feelings.</string>
+    <string name="search_hint">Type one "feeling" word</string>
     <string name="action_search">Search</string>
     <string name="title_activity_certificate_fragment">CertificateFragment</string>
     <string name="certdescription">This is an image of a certificate for using the app for 1 year.</string>
