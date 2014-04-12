@@ -26,7 +26,6 @@ public class NotificationsFragment extends Fragment {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, 
 	        Bundle savedInstanceState) {
         
-		((MainActivity) getActivity()).setActionBarTitle("Your title");
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.notifications_layout, container, false);
 

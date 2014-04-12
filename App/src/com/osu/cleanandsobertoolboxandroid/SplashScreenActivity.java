@@ -136,11 +136,11 @@ public class SplashScreenActivity extends Activity {
  		if(text.startsWith(url+stringURLArray[0])) {  //Disclaimer
  			int urlLength = (url+stringURLArray[0]).length();
  			//Toast.makeText(this, text.substring(urlLength), Toast.LENGTH_LONG).show();
- 			navigationMessages.edit().putString(NavigationMessageFragment.KEY+'0', text.substring(urlLength)).commit();
+ 			navigationMessages.edit().putString(NavigationMessageFragment.KEY+'0', text.substring(urlLength+1, text.length()-1)).commit();
  		} else if(text.startsWith(url+stringURLArray[1])) {   // Psychology
  			int urlLength = (url+stringURLArray[1]).length();
  			//Toast.makeText(this, text.substring(urlLength), Toast.LENGTH_LONG).show();
- 			navigationMessages.edit().putString(NavigationMessageFragment.KEY+'1', text.substring(urlLength)).commit();
+ 			navigationMessages.edit().putString(NavigationMessageFragment.KEY+'1', text.substring(urlLength+1, text.length()-1)).commit();
  		}
  	}
 
