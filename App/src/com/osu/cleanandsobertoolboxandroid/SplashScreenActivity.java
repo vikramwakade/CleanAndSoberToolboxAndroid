@@ -132,10 +132,10 @@ public class SplashScreenActivity extends Activity {
  	public void updateData(String text) {
  		if (text.startsWith(url+stringURLArray[0])) {  //Disclaimer
  			int urlLength = (url+stringURLArray[0]).length();
- 			navigationMessages.edit().putString(NavigationMessageFragment.KEY+'0', text.substring(urlLength+1, text.length()-1)).commit();
+ 			navigationMessages.edit().putString(NavigationMessageFragment.KEY+'0', text.substring(urlLength)).commit();
  		} else if (text.startsWith(url+stringURLArray[1])) {   // Psychology
  			int urlLength = (url+stringURLArray[1]).length();
- 			navigationMessages.edit().putString(NavigationMessageFragment.KEY+'1', text.substring(urlLength+1, text.length()-1)).commit();
+ 			navigationMessages.edit().putString(NavigationMessageFragment.KEY+'1', text.substring(urlLength)).commit();
  		} else if (text.startsWith(url+stringURLArray[2])) {	// Categories
  			int urlLength = (url+stringURLArray[2]).length();
  			navigationMessages.edit().putString("categories", text.substring(urlLength)).commit();
