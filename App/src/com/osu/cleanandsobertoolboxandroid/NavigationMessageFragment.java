@@ -12,8 +12,8 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 public class NavigationMessageFragment extends Fragment{
-	final static int disclaimer = 0; //position
-	final static int psychology = 2;
+	final static int disclaimer = 1; //position
+	final static int psychology = 3;
 	final static String DISCLAIMER = "disclaimer";
 	final static String KEY = "NAVIGATION_MESSAGE";
 	int curPosition = -1;
@@ -87,10 +87,12 @@ public class NavigationMessageFragment extends Fragment{
         super.onPrepareOptionsMenu(menu);
 
         MenuItem helpItem  = menu.findItem(R.id.help);
-        helpItem.setVisible(false);
+        if (helpItem != null)
+        	helpItem.setVisible(false);
         
         MenuItem searchItem  = menu.findItem(R.id.search);
-        searchItem.setVisible(false);
+        if (searchItem != null)
+        	searchItem.setVisible(false);
     }
 
 	@Override

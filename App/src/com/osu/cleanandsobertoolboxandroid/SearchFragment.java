@@ -6,9 +6,12 @@ import java.util.List;
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.SearchView;
 import android.widget.Toast;
 
 public class SearchFragment extends ListFragment {
@@ -26,6 +29,7 @@ public class SearchFragment extends ListFragment {
 	@Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
         
         if (savedInstanceState != null) {
             return;
@@ -47,6 +51,15 @@ public class SearchFragment extends ListFragment {
         
         // Create an array adapter for the list view
         setListAdapter(new ArrayAdapter<String>(getActivity(), R.layout.activity_list_layout, results));
+    }
+	
+	@Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+
+        MenuItem search  = menu.findItem(R.id.search);
+        if( search != null)
+        	search.setVisible(false);
     }
 	
 	@Override

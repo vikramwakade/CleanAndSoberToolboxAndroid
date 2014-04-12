@@ -84,8 +84,12 @@ public class MessageFragment extends Fragment {
     public void onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
 
-        MenuItem item  = menu.findItem(R.id.help);
-        if( item != null)
-        	item.setVisible(false);
+        MenuItem helpItem  = menu.findItem(R.id.help);
+        if (helpItem != null)
+        	helpItem.setVisible(false);
+        
+        MenuItem searchItem  = menu.findItem(R.id.search);
+        if (searchItem != null)
+        	searchItem.setVisible(false);
     }
 }

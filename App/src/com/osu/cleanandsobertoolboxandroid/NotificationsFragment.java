@@ -13,7 +13,7 @@ import android.widget.ToggleButton;
 
 public class NotificationsFragment extends Fragment {
 	int curPosition = -1;
-	final static int POSITION = 3;
+	final static int POSITION = 4;
 	
 	@Override
     public void onCreate(Bundle savedInstanceState) {
@@ -37,10 +37,12 @@ public class NotificationsFragment extends Fragment {
         super.onPrepareOptionsMenu(menu);
 
         MenuItem helpItem  = menu.findItem(R.id.help);
-        helpItem.setVisible(false);
+        if (helpItem != null)
+        	helpItem.setVisible(false);
         
         MenuItem searchItem  = menu.findItem(R.id.search);
-        searchItem.setVisible(false);
+        if (searchItem != null)
+        	searchItem.setVisible(false);
     }
 
     public void onActivityCreated (Bundle savedInstanceState){
