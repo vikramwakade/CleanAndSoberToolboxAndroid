@@ -145,7 +145,7 @@ public class MainActivity extends FragmentActivity
 	        String categories = ds.ProcessJSONFile(R.raw.categories);
 	        ds.PopulateDb(categories, messages);
 	        ds.close();
-        } else if (SplashScreenActivity.navigationMessages.getBoolean("updateDb", false)) {
+        } /*else if (SplashScreenActivity.navigationMessages.getBoolean("updateDb", false)) {
         	Toast.makeText(this, "Updating Database", Toast.LENGTH_LONG).show();
         	MessageDataSource ds = new MessageDataSource(this);
 	        ds.open();
@@ -158,7 +158,7 @@ public class MainActivity extends FragmentActivity
 	        	Toast.makeText(this, "Update finished", Toast.LENGTH_LONG).show();
 	        }
 	        ds.close();
-        }
+        }*/
         
         CategoryFragment firstFragment = new CategoryFragment();
         
@@ -352,11 +352,6 @@ public class MainActivity extends FragmentActivity
 	public boolean onCreateOptionsMenu(Menu menu) {
 		MenuInflater inflater = getMenuInflater();
 		inflater.inflate(R.menu.main, menu);
-        
-		//Associate searchable configuration with Searchview
-		SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-		SearchView searchView = (SearchView) menu.findItem(R.id.search).getActionView();
-		searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
 
 		return super.onCreateOptionsMenu(menu);
 	}
@@ -415,8 +410,7 @@ public class MainActivity extends FragmentActivity
 	        transaction.commit();
     	} 
     	//PayPal
-    	else if (position == 1){		// Donation Position in Navigation Drawer
-    		Toast.makeText(this,  " selected", Toast.LENGTH_LONG).show();
+    	else if (position == 2) {		// Donation Position in Navigation Drawer
     		Log.i("Info", ""+position);
     		Intent intent = new Intent(this, PaypalDonation.class);
     		String message = "No message";
@@ -439,6 +433,13 @@ public class MainActivity extends FragmentActivity
     		//Commit transaction
     		transaction.commit();
     		
+    	}
+    	// Search
+    	else if (position == 0) {
+    		Intent intent = new Intent(this, SearchActivity.class);
+    		String message = "No message";
+    		intent.putExtra(EXTRA_MESSAGE, message);
+    		startActivity(intent);
     	}
     	
     	mDrawerLayout.closeDrawer(mDrawerList);
@@ -467,6 +468,7 @@ public class MainActivity extends FragmentActivity
     	}
     	
     }
+    
     @Override
     public void setTitle(CharSequence title) {
         mTitle = title;

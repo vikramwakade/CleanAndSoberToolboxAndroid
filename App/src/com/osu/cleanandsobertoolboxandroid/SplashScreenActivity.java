@@ -23,7 +23,7 @@ import android.widget.Toast;
 public class SplashScreenActivity extends Activity {
 
 	//Splash screen timer
-	private static int SPLASH_TIME_OUT = 3000;
+	private static int SPLASH_TIME_OUT = 1000;
 	String url = "http://www.cleanandsobertoolbox.com/";
 	String stringURLArray[] = {"disclaimer.json", "psychology.json", "categories.json", "messages.json"};
 	
@@ -35,7 +35,6 @@ public class SplashScreenActivity extends Activity {
 		setContentView(R.layout.activity_splash_screen);
 		
 		navigationMessages = getSharedPreferences("com.osu.cleanandsobertoolboxandroid", MODE_PRIVATE);
-		
 		
         ConnectivityManager connMgr = (ConnectivityManager) 
             getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -63,11 +62,9 @@ public class SplashScreenActivity extends Activity {
 		}, SPLASH_TIME_OUT);
 	}
 
-	// TODO: Use this AnyncTask to download the JSON from the server
-	// when it is ready.
+	// AnyncTask to download the JSON from the server
 	private class DownloadFileTask extends AsyncTask<String, Void, String> {
-    	MessageDataSource ds = new MessageDataSource(getApplicationContext());
-    	
+		
     	@Override
 		protected String doInBackground(String... urls) {
     		// params comes from the execute() call: params[0] is the url.

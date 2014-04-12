@@ -19,7 +19,7 @@ public class RewardsFragment extends ListFragment
 	
 	SharedPreferences prefs = null;
     final String DAYS_SOBER = "DAYS_SOBER";
-    final static int position = 4; //Position on drawer menu
+    final static int position = 5; //Position on drawer menu
     
     ListView listView;
     List<RewardRowItem> rowItems = new ArrayList<RewardRowItem>();
@@ -85,10 +85,12 @@ public class RewardsFragment extends ListFragment
         super.onPrepareOptionsMenu(menu);
 
         MenuItem helpItem  = menu.findItem(R.id.help);
-        helpItem.setVisible(false);
+        if (helpItem != null)
+        	helpItem.setVisible(false);
         
         MenuItem searchItem  = menu.findItem(R.id.search);
-        searchItem.setVisible(false);
+        if (searchItem != null)
+        	searchItem.setVisible(false);
     }
 
 }
