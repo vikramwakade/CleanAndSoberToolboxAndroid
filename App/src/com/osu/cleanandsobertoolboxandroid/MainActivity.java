@@ -206,8 +206,43 @@ public class MainActivity extends FragmentActivity
 			prefs.edit().putString("LAST_USED", todaysDate).commit();
 			prefs.edit().putBoolean("firstrun", false).commit();
 			prefs.edit().putInt(DAYS_SOBER, 1).commit();
-			//Put pref for notifications to start
+			//Put pref for notifications button to start on
 			prefs.edit().putBoolean("firstrunnotes", true).commit();
+			
+			//Go ahead and schedule daily notifications
+//Go ahead and schedule the notifications initially
+    		
+    		Calendar calendar = Calendar.getInstance();
+			calendar.setTimeInMillis(System.currentTimeMillis());
+			calendar.add(Calendar.HOUR, 24);
+			
+			//Retrieve AlarmManager from system
+			AlarmManager alarmManager = (AlarmManager)getApplicationContext().getSystemService(getBaseContext().ALARM_SERVICE);
+			
+			//Create intent and pending intent
+			//Create alarm id
+			int id = (int) System.currentTimeMillis();
+			
+			//Need to save this id in sharedprefs so alarm can be deleted
+			prefs.edit().putInt("DailyId", id).commit();
+					
+			//Prepare intent
+			Intent intent = new Intent(this, AlarmReceiver.class);
+					
+			//Set mode of notification
+			intent.putExtra("NotificationType", 1);
+					
+			//Create pending intent (Need to do it here because we have to have the intent to cancel it too)
+			PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(),id, intent, 0);
+			
+			//Save toggle state in shared prefs
+			prefs.edit().putBoolean("Toggle", true).commit();
+			
+			//Save alarm time in shared prefs for recovery
+			prefs.edit().putLong("DailyNoteTime", calendar.getTimeInMillis()).commit();
+			
+    		//Register alarm in system
+			alarmManager.setRepeating(AlarmManager.RTC, calendar.getTimeInMillis(), AlarmManager.INTERVAL_DAY, pendingIntent);
 			
 			//Open help menu for first use
 			DialogFragment diaFragment = HelpDialogFragment.newInstance(help_message_index.getInt(HELP_INDEX, 1));
