@@ -184,6 +184,7 @@ public class MainActivity extends FragmentActivity
 		//Get prefs
 		prefs = getSharedPreferences("com.osu.cleanandsobertoolboxandroid", MODE_PRIVATE);
 
+		
 		// Create an instance of SimpleDateFormat used for formatting 
 		// the string representation of date (month/day/year)
 		DateFormat df = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss", Locale.US);
@@ -202,6 +203,8 @@ public class MainActivity extends FragmentActivity
 			prefs.edit().putString("LAST_USED", todaysDate).commit();
 			prefs.edit().putBoolean("firstrun", false).commit();
 			prefs.edit().putInt(DAYS_SOBER, 1).commit();
+			//Put pref for notifications to start
+			prefs.edit().putBoolean("firstrunnotes", true).commit();
 		} else {
 			//Check how many days it has been since last use
 
