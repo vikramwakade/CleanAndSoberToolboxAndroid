@@ -205,6 +205,10 @@ public class MainActivity extends FragmentActivity
 			prefs.edit().putInt(DAYS_SOBER, 1).commit();
 			//Put pref for notifications to start
 			prefs.edit().putBoolean("firstrunnotes", true).commit();
+			
+			//Open help menuy for first use
+			DialogFragment diaFragment = HelpDialogFragment.newInstance(help_message_index.getInt(HELP_INDEX, 1));
+			diaFragment.show(getFragmentManager(), HELP_MESSAGE);
 		} else {
 			//Check how many days it has been since last use
 
