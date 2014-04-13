@@ -69,6 +69,9 @@ public class MainActivity extends FragmentActivity
 		super.onCreate(savedInstanceState);
 		//requestWindowFeature(Window.FEATURE_CUSTOM_TITLE);
 		setContentView(R.layout.all_categories);
+		
+		//Check if Google Play Services available
+		
 
 		help_message_index = getSharedPreferences("com.osu.cleanandsobertoolboxandroid", MODE_PRIVATE);
 		help_message_index.edit().putInt(MainActivity.HELP_INDEX, 0).commit();
@@ -424,32 +427,7 @@ public class MainActivity extends FragmentActivity
     		String message = "No message";
     		intent.putExtra(EXTRA_MESSAGE, message);
     		startActivity(intent);
-    	}
-    	//Rewards Menu
-    	else if (position == RewardsFragment.position)
-    	{
-    		//Create RewardsMenu fragment
-    		RewardsFragment rewardfrag = new RewardsFragment();
-    		FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-    		
-    		// Replace whatever is in the fragment_container view with this fragment,
-	        // and add the transaction to the back stack so the user can navigate back
-    		//transaction.replace(R.id.content_frame, rewardfrag);
-    		transaction.replace(R.id.content_frame, rewardfrag);
-    		transaction.addToBackStack(null);
-    		
-    		//Commit transaction
-    		transaction.commit();
-    		
-    	}
-    	// Search
-    	else if (position == 0) {
-    		Intent intent = new Intent(this, SearchActivity.class);
-    		String message = "No message";
-    		intent.putExtra(EXTRA_MESSAGE, message);
-    		startActivity(intent);
-    	}
-    	
+    	}	
     	mDrawerLayout.closeDrawer(mDrawerList);
     }
 
@@ -506,6 +484,22 @@ public class MainActivity extends FragmentActivity
     			DialogFragment diaFragment = HelpDialogFragment.newInstance(help_message_index.getInt(HELP_INDEX, 1));
     			diaFragment.show(getFragmentManager(), HELP_MESSAGE);
     			return true;
+    		case R.id.rewards:
+    			//Open rewards menu fragment
+    			
+    			//Create RewardsMenu fragment
+        		RewardsFragment rewardfrag = new RewardsFragment();
+        		FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        		
+        		// Replace whatever is in the fragment_container view with this fragment,
+    	        // and add the transaction to the back stack so the user can navigate back
+        		//transaction.replace(R.id.content_frame, rewardfrag);
+        		transaction.replace(R.id.content_frame, rewardfrag);
+        		transaction.addToBackStack(null);
+        		
+        		//Commit transaction
+        		transaction.commit();
+        		return true;
     		//break;
     		default:
     			if (mDrawerToggle.onOptionsItemSelected(item)) {

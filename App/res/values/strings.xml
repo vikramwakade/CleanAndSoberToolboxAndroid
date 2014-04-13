@@ -9,7 +9,6 @@
         <item>Donate</item>
         <item>About the App</item>
         <item>Notifications</item>
-        <item>Rewards</item>
     </string-array>
     
     <string name="drawer_open">Open navigation drawer</string>
@@ -32,5 +31,7 @@
     <string name="coinfragdesc">This is a layout for the coin view.</string>
     <string name="todo">TODO</string>
     <string name="ok">OK</string>
+    <string name="rewards_instructions">If you use the App for 7 days, you will receive a 7 day Congratulatory badge. Similarly, if you use the App 30 days, 60 days, 90 days, 6 months, and one year, you will receive corresponding badges and a one year congratulatory certificate.</string>
+    <string name="rewards">Rewards</string>
 
 </resources>

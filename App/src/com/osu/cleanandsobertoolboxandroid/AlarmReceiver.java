@@ -47,7 +47,7 @@ public class AlarmReceiver extends BroadcastReceiver {
 			int id = (int) System.currentTimeMillis();
 			
 			//Text of notification
-			noti.setContentText("Congratulations, you've received a new reward!");
+			noti.setContentText("Visit the app to receive your reward!");
 			
 			//Create intent for notification
 			Intent intent = new Intent(context, MainActivity.class);
