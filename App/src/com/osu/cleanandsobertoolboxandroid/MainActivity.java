@@ -209,7 +209,7 @@ public class MainActivity extends FragmentActivity
 			//Put pref for notifications to start
 			prefs.edit().putBoolean("firstrunnotes", true).commit();
 			
-			//Open help menuy for first use
+			//Open help menu for first use
 			DialogFragment diaFragment = HelpDialogFragment.newInstance(help_message_index.getInt(HELP_INDEX, 1));
 			diaFragment.show(getFragmentManager(), HELP_MESSAGE);
 		} else {
