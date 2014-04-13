@@ -6,11 +6,9 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
-import android.app.ActionBar;
 import android.app.AlarmManager;
 import android.app.DialogFragment;
 import android.app.PendingIntent;
-import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -30,8 +28,6 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.SearchView;
-import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import com.google.android.gms.ads.AdRequest;
@@ -129,7 +125,8 @@ public class MainActivity extends FragmentActivity
             }
 
             public void onDrawerOpened(View drawerView) {
-                getActionBar().setTitle("App Days: " + days);//(mDrawerTitle);
+                getActionBar().setTitle("App Days" +
+                		": " + days);//(mDrawerTitle);
                 invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
             }
         };
@@ -183,6 +180,7 @@ public class MainActivity extends FragmentActivity
 		//Get prefs
 		prefs = getSharedPreferences("com.osu.cleanandsobertoolboxandroid", MODE_PRIVATE);
 
+		
 		// Create an instance of SimpleDateFormat used for formatting 
 		// the string representation of date (month/day/year)
 		DateFormat df = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss", Locale.US);
@@ -201,6 +199,12 @@ public class MainActivity extends FragmentActivity
 			prefs.edit().putString("LAST_USED", todaysDate).commit();
 			prefs.edit().putBoolean("firstrun", false).commit();
 			prefs.edit().putInt(DAYS_SOBER, 1).commit();
+			//Put pref for notifications to start
+			prefs.edit().putBoolean("firstrunnotes", true).commit();
+			
+			//Open help menuy for first use
+			DialogFragment diaFragment = HelpDialogFragment.newInstance(help_message_index.getInt(HELP_INDEX, 1));
+			diaFragment.show(getFragmentManager(), HELP_MESSAGE);
 		} else {
 			//Check how many days it has been since last use
 

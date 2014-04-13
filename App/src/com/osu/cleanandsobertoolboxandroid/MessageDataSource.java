@@ -259,9 +259,10 @@ public class MessageDataSource {
 		String[] mprojection = {
 				MessageEntry.COLUMN_NAME_ENTRY_ID,
 				MessageEntry.COLUMN_NAME_TITLE,
-				MessageEntry.COLUMN_NAME_MESSAGE
+				MessageEntry.COLUMN_NAME_MESSAGE,
+				MessageEntry.COLUMN_NAME_TODO
 		};
-	    String mselection = MessageEntry.COLUMN_NAME_MESSAGE + " MATCH '" + query + "'";
+	    String mselection = MessageEntry.TABLE_NAME + " MATCH '" + query + "'";
 	    
 	    Cursor mcursor = database.query( MessageEntry.TABLE_NAME, mprojection, 
 	    		mselection, null, null, null, null );
@@ -273,7 +274,7 @@ public class MessageDataSource {
 	    	} while (mcursor.moveToNext());
 
 	    }
-	    
+	    /*
 	    String[] projection = {
 				StructureEntry.COLUMN_NAME_ENTRY_ID,
 				StructureEntry.COLUMN_NAME_TITLE,
@@ -289,7 +290,7 @@ public class MessageDataSource {
 	    		categories.add(new Category(scursor.getInt(0), scursor.getString(1), scursor.getString(2)));
 	    	} while (scursor.moveToNext());
 	    }
-	    
+	    */
 	    return categories;
 	}
 }
