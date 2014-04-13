@@ -65,6 +65,9 @@ public class MainActivity extends FragmentActivity
 		super.onCreate(savedInstanceState);
 		//requestWindowFeature(Window.FEATURE_CUSTOM_TITLE);
 		setContentView(R.layout.all_categories);
+		
+		//Check if Google Play Services available
+		
 
 		help_message_index = getSharedPreferences("com.osu.cleanandsobertoolboxandroid", MODE_PRIVATE);
 		help_message_index.edit().putInt(MainActivity.HELP_INDEX, 0).commit();
@@ -199,10 +202,45 @@ public class MainActivity extends FragmentActivity
 			prefs.edit().putString("LAST_USED", todaysDate).commit();
 			prefs.edit().putBoolean("firstrun", false).commit();
 			prefs.edit().putInt(DAYS_SOBER, 1).commit();
-			//Put pref for notifications to start
+			//Put pref for notifications button to start on
 			prefs.edit().putBoolean("firstrunnotes", true).commit();
 			
-			//Open help menuy for first use
+			//Go ahead and schedule daily notifications
+//Go ahead and schedule the notifications initially
+    		
+    		Calendar calendar = Calendar.getInstance();
+			calendar.setTimeInMillis(System.currentTimeMillis());
+			calendar.add(Calendar.HOUR, 24);
+			
+			//Retrieve AlarmManager from system
+			AlarmManager alarmManager = (AlarmManager)getApplicationContext().getSystemService(getBaseContext().ALARM_SERVICE);
+			
+			//Create intent and pending intent
+			//Create alarm id
+			int id = (int) System.currentTimeMillis();
+			
+			//Need to save this id in sharedprefs so alarm can be deleted
+			prefs.edit().putInt("DailyId", id).commit();
+					
+			//Prepare intent
+			Intent intent = new Intent(this, AlarmReceiver.class);
+					
+			//Set mode of notification
+			intent.putExtra("NotificationType", 1);
+					
+			//Create pending intent (Need to do it here because we have to have the intent to cancel it too)
+			PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(),id, intent, 0);
+			
+			//Save toggle state in shared prefs
+			prefs.edit().putBoolean("Toggle", true).commit();
+			
+			//Save alarm time in shared prefs for recovery
+			prefs.edit().putLong("DailyNoteTime", calendar.getTimeInMillis()).commit();
+			
+    		//Register alarm in system
+			alarmManager.setRepeating(AlarmManager.RTC, calendar.getTimeInMillis(), AlarmManager.INTERVAL_DAY, pendingIntent);
+			
+			//Open help menu for first use
 			DialogFragment diaFragment = HelpDialogFragment.newInstance(help_message_index.getInt(HELP_INDEX, 1));
 			diaFragment.show(getFragmentManager(), HELP_MESSAGE);
 		} else {
@@ -420,32 +458,7 @@ public class MainActivity extends FragmentActivity
     		String message = "No message";
     		intent.putExtra(EXTRA_MESSAGE, message);
     		startActivity(intent);
-    	}
-    	//Rewards Menu
-    	else if (position == RewardsFragment.position)
-    	{
-    		//Create RewardsMenu fragment
-    		RewardsFragment rewardfrag = new RewardsFragment();
-    		FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-    		
-    		// Replace whatever is in the fragment_container view with this fragment,
-	        // and add the transaction to the back stack so the user can navigate back
-    		//transaction.replace(R.id.content_frame, rewardfrag);
-    		transaction.replace(R.id.content_frame, rewardfrag);
-    		transaction.addToBackStack(null);
-    		
-    		//Commit transaction
-    		transaction.commit();
-    		
-    	}
-    	// Search
-    	else if (position == 0) {
-    		Intent intent = new Intent(this, SearchActivity.class);
-    		String message = "No message";
-    		intent.putExtra(EXTRA_MESSAGE, message);
-    		startActivity(intent);
-    	}
-    	
+    	}	
     	mDrawerLayout.closeDrawer(mDrawerList);
     }
 
@@ -502,6 +515,22 @@ public class MainActivity extends FragmentActivity
     			DialogFragment diaFragment = HelpDialogFragment.newInstance(help_message_index.getInt(HELP_INDEX, 1));
     			diaFragment.show(getFragmentManager(), HELP_MESSAGE);
     			return true;
+    		case R.id.rewards:
+    			//Open rewards menu fragment
+    			
+    			//Create RewardsMenu fragment
+        		RewardsFragment rewardfrag = new RewardsFragment();
+        		FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        		
+        		// Replace whatever is in the fragment_container view with this fragment,
+    	        // and add the transaction to the back stack so the user can navigate back
+        		//transaction.replace(R.id.content_frame, rewardfrag);
+        		transaction.replace(R.id.content_frame, rewardfrag);
+        		transaction.addToBackStack(null);
+        		
+        		//Commit transaction
+        		transaction.commit();
+        		return true;
     		//break;
     		default:
     			if (mDrawerToggle.onOptionsItemSelected(item)) {

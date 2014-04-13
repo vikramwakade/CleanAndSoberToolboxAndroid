@@ -4,5 +4,10 @@
     	  android:showAsAction = "ifRoom"
     	  android:icon="@android:drawable/ic_menu_help"
     	  android:title="@string/todo" />    
+   	<item android:id="@+id/rewards"
+   	    android:showAsAction="ifRoom"
+   	    android:icon="@drawable/rewards"
+   	    android:title="@string/rewards"
+   	    />
 
 </menu>

@@ -64,40 +64,6 @@ public class NotificationsFragment extends Fragment {
     	{
     		button.setChecked(true);
     		prefs.edit().putBoolean("firstrunnotes", false).commit();
-    		
-    		//Go ahead and schedule the notifications initially
-    		
-    		Calendar calendar = Calendar.getInstance();
-			calendar.setTimeInMillis(System.currentTimeMillis());
-			calendar.add(Calendar.HOUR, 24);
-			
-			//Retrieve AlarmManager from system
-			AlarmManager alarmManager = (AlarmManager)getActivity().getApplicationContext().getSystemService(getActivity().getBaseContext().ALARM_SERVICE);
-			
-			//Create intent and pending intent
-			//Create alarm id
-			int id = (int) System.currentTimeMillis();
-			
-			//Need to save this id in sharedprefs so alarm can be deleted
-			prefs.edit().putInt("DailyId", id).commit();
-					
-			//Prepare intent
-			Intent intent = new Intent(this.getActivity(), AlarmReceiver.class);
-					
-			//Set mode of notification
-			intent.putExtra("NotificationType", 1);
-					
-			//Create pending intent (Need to do it here because we have to have the intent to cancel it too)
-			PendingIntent pendingIntent = PendingIntent.getBroadcast(getActivity().getApplicationContext(),id, intent, 0);
-			
-			//Save toggle state in shared prefs
-			prefs.edit().putBoolean("Toggle", true).commit();
-			
-			//Save alarm time in shared prefs for recovery
-			prefs.edit().putLong("DailyNoteTime", calendar.getTimeInMillis()).commit();
-			
-    		//Register alarm in system
-			alarmManager.setRepeating(AlarmManager.RTC, calendar.getTimeInMillis(), AlarmManager.INTERVAL_DAY, pendingIntent);
     	}
     	
     	else {
