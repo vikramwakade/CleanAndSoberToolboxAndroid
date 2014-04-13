@@ -462,7 +462,37 @@ public class MainActivity extends FragmentActivity
     		String message = "No message";
     		intent.putExtra(EXTRA_MESSAGE, message);
     		startActivity(intent);
-    	}	
+    	}
+    	//Random Message
+    	else if (position == 5){
+    		//Send user to a random message
+MessageFragment messageFragment = new MessageFragment();
+    		
+    		Bundle args = new Bundle();
+    		
+    		//Get random entry from database
+    		MessageDataSource ds = new MessageDataSource(this);
+            ds.open();
+            
+            //Get random index from db
+            int index = ds.getRandomIndex();
+            
+            ds.close();
+            
+            //Use the index we just got to open up a random message
+    		args.putInt(MessageFragment.CONTENT_ID, index );
+    		messageFragment.setArguments(args);
+
+    		FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+    		transaction.replace(R.id.content_frame, messageFragment);
+    		transaction.addToBackStack(null);
+
+    		//Replace prefstart in prefs so that it doesn't repeat this
+    		prefs.edit().putInt("FromNotification", 0).commit();
+    		
+    		// Commit the transaction
+    		transaction.commit();
+    	}
     	mDrawerLayout.closeDrawer(mDrawerList);
     }
 

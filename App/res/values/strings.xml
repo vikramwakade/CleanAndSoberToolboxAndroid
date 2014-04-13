@@ -9,6 +9,7 @@
         <item>Donate</item>
         <item>About the App</item>
         <item>Notifications</item>
+        <item>Random Message</item>
     </string-array>
     
     <string name="drawer_open">Open navigation drawer</string>
