@@ -2,11 +2,16 @@ package com.osu.cleanandsobertoolboxandroid;
 
 import java.math.BigDecimal;
 
+import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
+import org.json.JSONTokener;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
@@ -23,10 +28,12 @@ public class PaypalDonation extends Activity {
 	// set to PaymentActivity.ENVIRONMENT_PRODUCTION to move real money.
     // set to PaymentActivity.ENVIRONMENT_SANDBOX to use your test credentials from https://developer.paypal.com
     // set to PaymentActivity.ENVIRONMENT_NO_NETWORK to kick the tires without communicating to PayPal's servers.
-    private static final String CONFIG_ENVIRONMENT = PaymentActivity.ENVIRONMENT_SANDBOX;
+    private static final String CONFIG_ENVIRONMENT = PaymentActivity.ENVIRONMENT_NO_NETWORK;
     
 	// note that these credentials will differ between live & sandbox environments.
-    private static final String CONFIG_CLIENT_ID = "AToYtBCmDFosxUa5Ryu-wQjX-M3TlZceA453V7JpiOpJdnei6KxG8kjyhFmO"; //"credential-from-developer.paypal.com"
+    private static final String CONFIG_CLIENT_ID = "AbsS7xCV4p_NtQnEUs07SSxR8sz5g2ad7HT9Sbwi7AQh4UHD4QnqE8yXs3fK"; //"credential-from-developer.paypal.com"
+    
+    private static final String RECEIVER_EMAIL = "cleanandsobertoolbox-facilitator@gmail.com";
     
     private EditText donationAmt;
 	@Override
@@ -81,9 +88,12 @@ public class PaypalDonation extends Activity {
 		
 			    // Provide a payerId that uniquely identifies a user within the scope of your system,
 			    // such as an email address or user ID.
-			    intent.putExtra(PaymentActivity.EXTRA_PAYER_ID, "<someuser@somedomain.com>");
+			    final TelephonyManager tm =(TelephonyManager)getBaseContext().getSystemService(Context.TELEPHONY_SERVICE);
+
+			    String deviceid = tm.getDeviceId();
+			    intent.putExtra(PaymentActivity.EXTRA_PAYER_ID, deviceid);//"<someuser@somedomain.com>");
 		
-			    intent.putExtra(PaymentActivity.EXTRA_RECEIVER_EMAIL, "thugenberg-facilitator@yahoo.com");
+			    intent.putExtra(PaymentActivity.EXTRA_RECEIVER_EMAIL, RECEIVER_EMAIL);
 			    intent.putExtra(PaymentActivity.EXTRA_PAYMENT, payment);
 		
 			    startActivityForResult(intent, 0);
@@ -97,8 +107,30 @@ public class PaypalDonation extends Activity {
 	        PaymentConfirmation confirm = data.getParcelableExtra(PaymentActivity.EXTRA_RESULT_CONFIRMATION);
 	        if (confirm != null) {
 	            try {
+	            	
 	                Log.i("paymentExample", confirm.toJSONObject().toString(4));
-
+	                //Toast.makeText(this,  confirm.toJSONObject().toString(4), Toast.LENGTH_LONG).show();
+	                JSONTokener tokener = new JSONTokener(confirm.toJSONObject().toString(4));
+	                JSONObject root = new JSONObject(tokener);
+	                
+	                String proof_of_payment_result = root.getString("proof_of_payment");
+	                //Toast.makeText(this,  proof_of_payment_result, Toast.LENGTH_LONG).show();
+	                Log.i("proof", proof_of_payment_result);
+	                
+	                JSONTokener proof_of_payment_tokener = new JSONTokener(proof_of_payment_result);
+	                JSONObject proof_of_payment_root = new JSONObject(proof_of_payment_tokener);
+	                
+	                String rest_api_result = proof_of_payment_root.getString("rest_api");
+	                //Toast.makeText(this,  rest_api_result, Toast.LENGTH_LONG).show();
+	                Log.i("proof", rest_api_result);
+	                
+	                
+	                JSONTokener final_tokener = new JSONTokener(rest_api_result);
+	                JSONObject final_root = new JSONObject(final_tokener);
+	                
+	                String result = final_root.getString("state");
+	                Toast.makeText(this, "Your Transaction is " + result, Toast.LENGTH_LONG).show();
+	                Log.i("proof", result);
 	                // TODO: send 'confirm' to your server for verification.
 	                // see https://developer.paypal.com/webapps/developer/docs/integration/mobile/verify-mobile-payment/
 	                // for more details.

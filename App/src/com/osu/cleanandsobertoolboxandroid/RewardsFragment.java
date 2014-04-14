@@ -91,6 +91,10 @@ public class RewardsFragment extends ListFragment
         MenuItem searchItem  = menu.findItem(R.id.search);
         if (searchItem != null)
         	searchItem.setVisible(false);
+        
+        MenuItem rewardItem  = menu.findItem(R.id.rewards);
+        if (rewardItem != null)
+        	rewardItem.setVisible(false);
     }
 
 }

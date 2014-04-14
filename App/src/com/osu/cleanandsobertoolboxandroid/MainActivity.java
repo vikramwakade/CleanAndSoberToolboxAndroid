@@ -55,7 +55,7 @@ public class MainActivity extends FragmentActivity
     private AdView adView;
  
     /* Your ad unit id. Replace with your actual ad unit id. */
-    private static final String AD_UNIT_ID = "INSERT_YOUR_AD_UNIT_ID_HERE";
+    private static final String AD_UNIT_ID = "ca-app-pub-4425629879199780/5585658553";
     public static final String HELP_INDEX = "INDEX";
     public static SharedPreferences help_message_index = null;
     
@@ -76,7 +76,7 @@ public class MainActivity extends FragmentActivity
 		// Create an ad.
 	    adView = new AdView(this);
 	    adView.setAdSize(AdSize.BANNER);
-	    adView.setAdUnitId("0445b7141d9d4e1b");
+	    adView.setAdUnitId(AD_UNIT_ID);//("0445b7141d9d4e1b");
 
 	    // Add the AdView to the view hierarchy. The view will have no size
 	    // until the ad is loaded.
@@ -459,6 +459,13 @@ public class MainActivity extends FragmentActivity
     		intent.putExtra(EXTRA_MESSAGE, message);
     		startActivity(intent);
     	}	
+    	// Search
+    	 else if (position == 0) {
+    		Intent intent = new Intent(this, SearchActivity.class);
+    		String message = "No message";
+    		intent.putExtra(EXTRA_MESSAGE, message);
+    		startActivity(intent);
+    	}
     	mDrawerLayout.closeDrawer(mDrawerList);
     }
 
