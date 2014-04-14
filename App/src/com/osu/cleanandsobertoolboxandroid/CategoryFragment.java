@@ -4,11 +4,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.app.Activity;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
@@ -64,7 +67,18 @@ public class CategoryFragment extends ListFragment {
         
         // Create an array adapter for the list view
         setListAdapter(new ArrayAdapter<String>(getActivity(), R.layout.activity_list_layout, categories));
+        
     }
+	
+	@Override
+	public void onActivityCreated (Bundle savedInstanceState){
+		super.onActivityCreated(savedInstanceState);
+		
+		//Make list have dividers
+		ListView list = this.getListView();
+        list.setDivider(new ColorDrawable(0xFF000000));
+        list.setDividerHeight(1);
+	}
 	
 	@Override
 	public void onAttach(Activity activity) {
@@ -75,7 +89,7 @@ public class CategoryFragment extends ListFragment {
 
 	@Override
 	public void onStart() {
-		// TODO Auto-generated method stub
+		
 		super.onStart();
 	}
 

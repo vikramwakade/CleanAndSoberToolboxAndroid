@@ -13,6 +13,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.FragmentActivity;
@@ -28,6 +29,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import com.google.android.gms.ads.AdRequest;
@@ -66,7 +68,8 @@ public class MainActivity extends FragmentActivity
 		//requestWindowFeature(Window.FEATURE_CUSTOM_TITLE);
 		setContentView(R.layout.all_categories);
 		
-		//Check if Google Play Services available
+		getActionBar().setBackgroundDrawable(new 
+	               ColorDrawable(0xFF444444));
 		
 
 		help_message_index = getSharedPreferences("com.osu.cleanandsobertoolboxandroid", MODE_PRIVATE);
@@ -145,8 +148,8 @@ public class MainActivity extends FragmentActivity
 	        String categories = ds.ProcessJSONFile(R.raw.categories);
 	        ds.PopulateDb(categories, messages);
 	        ds.close();
-        } /*else if (SplashScreenActivity.navigationMessages.getBoolean("updateDb", false)) {
-        	Toast.makeText(this, "Updating Database", Toast.LENGTH_LONG).show();
+        } else if (SplashScreenActivity.navigationMessages.getBoolean("updateDb", false)) {
+        	Toast.makeText(this, "Started updating the database", Toast.LENGTH_LONG).show();
         	MessageDataSource ds = new MessageDataSource(this);
 	        ds.open();
 	        String categories = SplashScreenActivity.navigationMessages.getString("categories", null);
@@ -155,10 +158,10 @@ public class MainActivity extends FragmentActivity
 	        	ds.EmptyDb();
 	        	ds.PopulateDb(categories, messages);
 	        	SplashScreenActivity.navigationMessages.edit().putBoolean("updateDb", false).commit();
-	        	Toast.makeText(this, "Update finished", Toast.LENGTH_LONG).show();
+	        	Toast.makeText(this, "Finished updating database", Toast.LENGTH_LONG).show();
 	        }
 	        ds.close();
-        }*/
+        }
         
         CategoryFragment firstFragment = new CategoryFragment();
         
@@ -171,6 +174,7 @@ public class MainActivity extends FragmentActivity
         // Add the fragment to the 'fragment_container' FrameLayout
         getSupportFragmentManager().beginTransaction()
                 .add(R.id.content_frame, firstFragment).commit();
+        
 	}
 
 	@Override
@@ -436,6 +440,18 @@ public class MainActivity extends FragmentActivity
 	        // Commit the transaction
 	        transaction.commit();
     	}
+    	//Search bar
+    	else if (position == 0) {
+
+    	     Intent intent = new Intent(this, SearchActivity.class);
+
+    	     String message = "No message";
+
+    	     intent.putExtra(EXTRA_MESSAGE, message);
+
+    	     startActivity(intent);
+
+    	     }
     	//Notifications menu
     	else if(position == NotificationsFragment.POSITION)
     	{
@@ -459,13 +475,37 @@ public class MainActivity extends FragmentActivity
     		intent.putExtra(EXTRA_MESSAGE, message);
     		startActivity(intent);
     	}	
-    	// Search
-    	 else if (position == 0) {
-    		Intent intent = new Intent(this, SearchActivity.class);
-    		String message = "No message";
-    		intent.putExtra(EXTRA_MESSAGE, message);
-    		startActivity(intent);
+    	//Random Message
+    	else if (position == 5){
+    		//Send user to a random message
+    		MessageFragment messageFragment = new MessageFragment();
+    		
+    		Bundle args = new Bundle();
+    		
+    		//Get random entry from database
+    		MessageDataSource ds = new MessageDataSource(this);
+            ds.open();
+            
+            //Get random index from db
+            int index = ds.getRandomIndex();
+            
+            ds.close();
+            
+            //Use the index we just got to open up a random message
+    		args.putInt(MessageFragment.CONTENT_ID, index );
+    		messageFragment.setArguments(args);
+
+    		FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+    		transaction.replace(R.id.content_frame, messageFragment);
+    		transaction.addToBackStack(null);
+
+    		//Replace prefstart in prefs so that it doesn't repeat this
+    		prefs.edit().putInt("FromNotification", 0).commit();
+    		
+    		// Commit the transaction
+    		transaction.commit();
     	}
+    	
     	mDrawerLayout.closeDrawer(mDrawerList);
     }
 
@@ -564,6 +604,7 @@ public class MainActivity extends FragmentActivity
 
     		// Commit the transaction
     		transaction.commit();
+    		
     	} else if(type.equals("content")) {
     		MessageFragment messageFragment = new MessageFragment();
     		
