@@ -33,7 +33,7 @@
         android:layout_width="240dp"
         android:layout_height="match_parent"
         android:layout_gravity="start"
-       	android:background="#B3B0E0FF"
+       	android:background="#80B0E0FF"
         android:choiceMode="singleChoice"
         android:divider="#FF000000"
         android:dividerHeight="1dp"
