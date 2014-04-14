@@ -22,7 +22,8 @@
     <string name="buy">Buy a thing</string>
     <string name="notifications">Would you like to receive daily notifications?</string>
     <string name="app_label">Clean &amp; Sober Toolbox</string>
-    <string name="search_hint">Type one "feeling" word</string>
+    <string name="search_hint">Type one &quot;feeling&quot; word</string>
+    <string name="new_search_hint">Type one \"feeling\" word</string>
     <string name="action_search">Search</string>
     <string name="title_activity_certificate_fragment">CertificateFragment</string>
     <string name="certdescription">This is an image of a certificate for using the app for 1 year.</string>
