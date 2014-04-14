@@ -21,7 +21,7 @@
     <string name="title_activity_splash_screen">SplashScreen</string>
     <string name="buy">Buy a thing</string>
     <string name="notifications">Would you like to receive daily notifications?</string>
-    <string name="app_label">Clean and Sober Toolbox</string>
+    <string name="app_label">Clean &amp; Sober Toolbox</string>
     <string name="search_hint">Type one "feeling" word</string>
     <string name="action_search">Search</string>
     <string name="title_activity_certificate_fragment">CertificateFragment</string>
