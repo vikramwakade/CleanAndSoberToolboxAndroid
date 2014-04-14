@@ -25,6 +25,7 @@ public class SplashScreenActivity extends Activity {
 	//Splash screen timer
 	private static int SPLASH_TIME_OUT = 1000;
 	String url = "http://www.cleanandsobertoolbox.com/";
+	String version = "version";
 	String stringURLArray[] = {"disclaimer.json", "psychology.json", "categories.json", "messages.json"};
 	
 	public static SharedPreferences navigationMessages = null;
@@ -40,10 +41,7 @@ public class SplashScreenActivity extends Activity {
             getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
         if (networkInfo != null && networkInfo.isConnected()) {
-        	for(int i = 0; i<stringURLArray.length; ++i) {
-        		Log.i("SPLASH+INFO", url + stringURLArray[i]);
-        		new DownloadFileTask().execute(url + stringURLArray[i]);
-        	}
+        	new DownloadFileTask().execute(url + version);
         } else {
         	Toast.makeText(this, "No network connection available.", Toast.LENGTH_LONG).show();
         }
@@ -77,7 +75,20 @@ public class SplashScreenActivity extends Activity {
     	
     	@Override
     	protected void onPostExecute(String data) {
-    		updateData(data);
+    		if (data.startsWith(url + version)) {
+     			int urlLength = (url + version).length();
+     			String previousVersion = navigationMessages.getString(version, "-1");
+     			String currentVersion = data.substring(urlLength);
+     			if (!previousVersion.equals(currentVersion)) {
+     				for(int i = 0; i<stringURLArray.length; ++i) {
+     					new DownloadFileTask().execute(url + stringURLArray[i]);
+            		}
+     				navigationMessages.edit().putString(version, data.substring(urlLength)).commit();
+     			}
+     		}
+    		else {
+    			updateData(data);
+    		}
     	}
     }
     
@@ -139,11 +150,19 @@ public class SplashScreenActivity extends Activity {
  		} else if (text.startsWith(url+stringURLArray[2])) {	// Categories
  			int urlLength = (url+stringURLArray[2]).length();
  			navigationMessages.edit().putString("categories", text.substring(urlLength)).commit();
- 			navigationMessages.edit().putBoolean("updateDb", true).commit();
+ 			navigationMessages.edit().putBoolean("updateCategories", true).commit();
+ 			// update database only if messages have been downloaded 
+ 			if (navigationMessages.getBoolean("updateMessages", false))
+ 				navigationMessages.edit().putBoolean("updateDb", true).commit();
  		} else if (text.startsWith(url+stringURLArray[3])) {	// Messages
  			int urlLength = (url+stringURLArray[3]).length();
  			navigationMessages.edit().putString("messages", text.substring(urlLength)).commit();
- 			navigationMessages.edit().putBoolean("updateDb", true).commit();
+ 			navigationMessages.edit().putBoolean("updateMessages", true).commit();
+ 			// update database only if categories have been downloaded
+ 			// one of the two will be set before the other, so updateDb 
+ 			// will be set only once!
+ 			if (navigationMessages.getBoolean("updateCategories", false))
+ 				navigationMessages.edit().putBoolean("updateDb", true).commit();
  		}
  	}
 

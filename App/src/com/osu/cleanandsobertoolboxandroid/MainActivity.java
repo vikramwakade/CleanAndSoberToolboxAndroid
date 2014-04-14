@@ -151,8 +151,8 @@ public class MainActivity extends FragmentActivity
 	        String categories = ds.ProcessJSONFile(R.raw.categories);
 	        ds.PopulateDb(categories, messages);
 	        ds.close();
-        } /*else if (SplashScreenActivity.navigationMessages.getBoolean("updateDb", false)) {
-        	Toast.makeText(this, "Updating Database", Toast.LENGTH_LONG).show();
+        } else if (SplashScreenActivity.navigationMessages.getBoolean("updateDb", false)) {
+        	Toast.makeText(this, "Started updating the database", Toast.LENGTH_LONG).show();
         	MessageDataSource ds = new MessageDataSource(this);
 	        ds.open();
 	        String categories = SplashScreenActivity.navigationMessages.getString("categories", null);
@@ -161,10 +161,10 @@ public class MainActivity extends FragmentActivity
 	        	ds.EmptyDb();
 	        	ds.PopulateDb(categories, messages);
 	        	SplashScreenActivity.navigationMessages.edit().putBoolean("updateDb", false).commit();
-	        	Toast.makeText(this, "Update finished", Toast.LENGTH_LONG).show();
+	        	Toast.makeText(this, "Finished updating database", Toast.LENGTH_LONG).show();
 	        }
 	        ds.close();
-        }*/
+        }
         
         CategoryFragment firstFragment = new CategoryFragment();
         
@@ -469,7 +469,7 @@ public class MainActivity extends FragmentActivity
     	//Random Message
     	else if (position == 5){
     		//Send user to a random message
-MessageFragment messageFragment = new MessageFragment();
+    		MessageFragment messageFragment = new MessageFragment();
     		
     		Bundle args = new Bundle();
     		
@@ -496,6 +496,7 @@ MessageFragment messageFragment = new MessageFragment();
     		// Commit the transaction
     		transaction.commit();
     	}
+    	
     	mDrawerLayout.closeDrawer(mDrawerList);
     }
 
