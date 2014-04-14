@@ -77,9 +77,9 @@ public class SplashScreenActivity extends Activity {
     	protected void onPostExecute(String data) {
     		if (data.startsWith(url + version)) {
      			int urlLength = (url + version).length();
-     			String previousVersion = navigationMessages.getString(version, "-1");
-     			String currentVersion = data.substring(urlLength);
-     			if (!previousVersion.equals(currentVersion)) {
+     			String appVersion = navigationMessages.getString(version, "-1");
+     			String serverVersion = data.substring(urlLength);
+     			if (!appVersion.equals(serverVersion)) {
      				for(int i = 0; i<stringURLArray.length; ++i) {
      					new DownloadFileTask().execute(url + stringURLArray[i]);
             		}
