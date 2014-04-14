@@ -15,6 +15,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.FragmentActivity;
@@ -70,7 +71,8 @@ public class MainActivity extends FragmentActivity
 		//requestWindowFeature(Window.FEATURE_CUSTOM_TITLE);
 		setContentView(R.layout.all_categories);
 		
-		//Check if Google Play Services available
+		getActionBar().setBackgroundDrawable(new 
+	               ColorDrawable(0xFF444444));
 		
 
 		help_message_index = getSharedPreferences("com.osu.cleanandsobertoolboxandroid", MODE_PRIVATE);
@@ -175,6 +177,7 @@ public class MainActivity extends FragmentActivity
         // Add the fragment to the 'fragment_container' FrameLayout
         getSupportFragmentManager().beginTransaction()
                 .add(R.id.content_frame, firstFragment).commit();
+        
 	}
 
 	@Override
@@ -591,6 +594,7 @@ MessageFragment messageFragment = new MessageFragment();
 
     		// Commit the transaction
     		transaction.commit();
+    		
     	} else if(type.equals("content")) {
     		MessageFragment messageFragment = new MessageFragment();
     		
