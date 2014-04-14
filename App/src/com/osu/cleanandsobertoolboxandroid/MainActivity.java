@@ -443,6 +443,18 @@ public class MainActivity extends FragmentActivity
 	        // Commit the transaction
 	        transaction.commit();
     	}
+    	//Search bar
+    	else if (position == 0) {
+
+    	     Intent intent = new Intent(this, SearchActivity.class);
+
+    	     String message = "No message";
+
+    	     intent.putExtra(EXTRA_MESSAGE, message);
+
+    	     startActivity(intent);
+
+    	     }
     	//Notifications menu
     	else if(position == NotificationsFragment.POSITION)
     	{
