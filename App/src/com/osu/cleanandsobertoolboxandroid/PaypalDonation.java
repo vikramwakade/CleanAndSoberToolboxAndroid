@@ -2,7 +2,6 @@ package com.osu.cleanandsobertoolboxandroid;
 
 import java.math.BigDecimal;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
@@ -18,6 +17,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.paypal.android.sdk.payments.PayPalConfiguration;
 import com.paypal.android.sdk.payments.PayPalPayment;
 import com.paypal.android.sdk.payments.PayPalService;
 import com.paypal.android.sdk.payments.PaymentActivity;
@@ -25,17 +25,22 @@ import com.paypal.android.sdk.payments.PaymentConfirmation;
 
 public class PaypalDonation extends Activity {
 	
-	// set to PaymentActivity.ENVIRONMENT_PRODUCTION to move real money.
-    // set to PaymentActivity.ENVIRONMENT_SANDBOX to use your test credentials from https://developer.paypal.com
-    // set to PaymentActivity.ENVIRONMENT_NO_NETWORK to kick the tires without communicating to PayPal's servers.
-    private static final String CONFIG_ENVIRONMENT = PaymentActivity.ENVIRONMENT_NO_NETWORK;
     
 	// note that these credentials will differ between live & sandbox environments.
-    private static final String CONFIG_CLIENT_ID = "AbsS7xCV4p_NtQnEUs07SSxR8sz5g2ad7HT9Sbwi7AQh4UHD4QnqE8yXs3fK"; //"credential-from-developer.paypal.com"
+    private static final String CONFIG_CLIENT_ID ="AV5JmxC2sqLp4Q5ENSAb-Q6lPpUSbOrgGPO-weTBvEssgp5nzbJjld4GvgTj";//AXputRBJLZnwcRnuIXkjgLde3hWk_DeC54PlR2X11TxcWeF0MY6AcA4NP7R6";
     
-    private static final String RECEIVER_EMAIL = "cleanandsobertoolbox-facilitator@gmail.com";
+    private static final String CONFIG_RECEIVER_EMAIL = "cleanandsobertoolbox-facilitator@gmail.com";
     
     private EditText donationAmt;
+    
+    private static PayPalConfiguration config = new PayPalConfiguration()
+
+    // Start with mock environment.  When ready, switch to sandbox (ENVIRONMENT_SANDBOX)
+    // or live (ENVIRONMENT_PRODUCTION)
+    .environment(PayPalConfiguration.ENVIRONMENT_SANDBOX)
+
+    .clientId(CONFIG_CLIENT_ID);
+    
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -45,12 +50,7 @@ public class PaypalDonation extends Activity {
 		
 		Intent intent = new Intent(this, PayPalService.class);
 
-	    // live: don't put any environment extra
-	    // sandbox: use PaymentActivity.ENVIRONMENT_SANDBOX
-	    intent.putExtra(PaymentActivity.EXTRA_PAYPAL_ENVIRONMENT, CONFIG_ENVIRONMENT);
-
-	    intent.putExtra(PaymentActivity.EXTRA_CLIENT_ID, CONFIG_CLIENT_ID);
-
+		intent.putExtra(PayPalService.EXTRA_PAYPAL_CONFIGURATION, config);
 	    startService(intent);
 	}
 
@@ -75,25 +75,10 @@ public class PaypalDonation extends Activity {
 			if (amt < 1) {
 				Toast.makeText(this,  "Please donate atleast $1.00", Toast.LENGTH_LONG).show();
 			} else{
-			    PayPalPayment payment = new PayPalPayment(new BigDecimal(amount), "USD", "Donate");
+			    PayPalPayment payment = new PayPalPayment(new BigDecimal(amount), "USD", "Donate",PayPalPayment.PAYMENT_INTENT_SALE);
 		
 			    Intent intent = new Intent(this, PaymentActivity.class);
 		
-			    // comment this line out for live or set to PaymentActivity.ENVIRONMENT_SANDBOX for sandbox
-			    intent.putExtra(PaymentActivity.EXTRA_PAYPAL_ENVIRONMENT, CONFIG_ENVIRONMENT);
-		
-			    // it's important to repeat the clientId here so that the SDK has it if Android restarts your
-			    // app midway through the payment UI flow.
-			    intent.putExtra(PaymentActivity.EXTRA_CLIENT_ID, CONFIG_CLIENT_ID);
-		
-			    // Provide a payerId that uniquely identifies a user within the scope of your system,
-			    // such as an email address or user ID.
-			    final TelephonyManager tm =(TelephonyManager)getBaseContext().getSystemService(Context.TELEPHONY_SERVICE);
-
-			    String deviceid = tm.getDeviceId();
-			    intent.putExtra(PaymentActivity.EXTRA_PAYER_ID, deviceid);//"<someuser@somedomain.com>");
-		
-			    intent.putExtra(PaymentActivity.EXTRA_RECEIVER_EMAIL, RECEIVER_EMAIL);
 			    intent.putExtra(PaymentActivity.EXTRA_PAYMENT, payment);
 		
 			    startActivityForResult(intent, 0);
@@ -113,24 +98,20 @@ public class PaypalDonation extends Activity {
 	                JSONTokener tokener = new JSONTokener(confirm.toJSONObject().toString(4));
 	                JSONObject root = new JSONObject(tokener);
 	                
-	                String proof_of_payment_result = root.getString("proof_of_payment");
+	                String response_result = root.getString("response");
 	                //Toast.makeText(this,  proof_of_payment_result, Toast.LENGTH_LONG).show();
-	                Log.i("proof", proof_of_payment_result);
+	                Log.i("proof", response_result);
 	                
-	                JSONTokener proof_of_payment_tokener = new JSONTokener(proof_of_payment_result);
+	                JSONTokener proof_of_payment_tokener = new JSONTokener(response_result);
 	                JSONObject proof_of_payment_root = new JSONObject(proof_of_payment_tokener);
 	                
-	                String rest_api_result = proof_of_payment_root.getString("rest_api");
+	                String state_result = proof_of_payment_root.getString("state");
 	                //Toast.makeText(this,  rest_api_result, Toast.LENGTH_LONG).show();
-	                Log.i("proof", rest_api_result);
+	                Log.i("proof", state_result);
 	                
 	                
-	                JSONTokener final_tokener = new JSONTokener(rest_api_result);
-	                JSONObject final_root = new JSONObject(final_tokener);
-	                
-	                String result = final_root.getString("state");
-	                Toast.makeText(this, "Your Transaction is " + result, Toast.LENGTH_LONG).show();
-	                Log.i("proof", result);
+	                Toast.makeText(this, "Your Transaction is " + state_result, Toast.LENGTH_LONG).show();
+	                Log.i("proof", state_result);
 	                // TODO: send 'confirm' to your server for verification.
 	                // see https://developer.paypal.com/webapps/developer/docs/integration/mobile/verify-mobile-payment/
 	                // for more details.
@@ -143,7 +124,7 @@ public class PaypalDonation extends Activity {
 	    else if (resultCode == Activity.RESULT_CANCELED) {
 	        Log.i("paymentExample", "The user canceled.");
 	    }
-	    else if (resultCode == PaymentActivity.RESULT_PAYMENT_INVALID) {
+	    else if (resultCode == PaymentActivity.RESULT_EXTRAS_INVALID) {
 	        Log.i("paymentExample", "An invalid payment was submitted. Please see the docs.");
 	    }
 	}
