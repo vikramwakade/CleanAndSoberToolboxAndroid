@@ -6,7 +6,7 @@
     	  android:title="@string/todo" />    
    	<item android:id="@+id/rewards"
    	    android:showAsAction="ifRoom"
-   	    android:icon="@drawable/rewards"
+   	    android:titleCondensed="@string/rewards"
    	    android:title="@string/rewards"
    	    />
 
