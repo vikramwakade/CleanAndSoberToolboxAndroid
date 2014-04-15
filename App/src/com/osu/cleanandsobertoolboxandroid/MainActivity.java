@@ -6,11 +6,9 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
-import android.app.ActionBar;
 import android.app.AlarmManager;
 import android.app.DialogFragment;
 import android.app.PendingIntent;
-import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -31,7 +29,6 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.SearchView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
@@ -60,7 +57,7 @@ public class MainActivity extends FragmentActivity
     private AdView adView;
  
     /* Your ad unit id. Replace with your actual ad unit id. */
-    private static final String AD_UNIT_ID = "INSERT_YOUR_AD_UNIT_ID_HERE";
+    private static final String AD_UNIT_ID = "ca-app-pub-4425629879199780/5585658553";
     public static final String HELP_INDEX = "INDEX";
     public static SharedPreferences help_message_index = null;
     
@@ -82,7 +79,7 @@ public class MainActivity extends FragmentActivity
 		// Create an ad.
 	    adView = new AdView(this);
 	    adView.setAdSize(AdSize.BANNER);
-	    adView.setAdUnitId("0445b7141d9d4e1b");
+	    adView.setAdUnitId(AD_UNIT_ID);//("0445b7141d9d4e1b");
 
 	    // Add the AdView to the view hierarchy. The view will have no size
 	    // until the ad is loaded.
@@ -477,7 +474,7 @@ public class MainActivity extends FragmentActivity
     		String message = "No message";
     		intent.putExtra(EXTRA_MESSAGE, message);
     		startActivity(intent);
-    	}
+    	}	
     	//Random Message
     	else if (position == 5){
     		//Send user to a random message
