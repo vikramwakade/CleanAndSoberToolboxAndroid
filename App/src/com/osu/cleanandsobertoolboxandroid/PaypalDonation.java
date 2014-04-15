@@ -7,10 +7,8 @@ import org.json.JSONObject;
 import org.json.JSONTokener;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
@@ -27,7 +25,7 @@ public class PaypalDonation extends Activity {
 	
     
 	// note that these credentials will differ between live & sandbox environments.
-    private static final String CONFIG_CLIENT_ID ="AV5JmxC2sqLp4Q5ENSAb-Q6lPpUSbOrgGPO-weTBvEssgp5nzbJjld4GvgTj";//AXputRBJLZnwcRnuIXkjgLde3hWk_DeC54PlR2X11TxcWeF0MY6AcA4NP7R6";
+    private static final String CONFIG_CLIENT_ID ="AXputRBJLZnwcRnuIXkjgLde3hWk_DeC54PlR2X11TxcWeF0MY6AcA4NP7R6";
     
     private static final String CONFIG_RECEIVER_EMAIL = "cleanandsobertoolbox-facilitator@gmail.com";
     
@@ -37,7 +35,7 @@ public class PaypalDonation extends Activity {
 
     // Start with mock environment.  When ready, switch to sandbox (ENVIRONMENT_SANDBOX)
     // or live (ENVIRONMENT_PRODUCTION)
-    .environment(PayPalConfiguration.ENVIRONMENT_SANDBOX)
+    .environment(PayPalConfiguration.ENVIRONMENT_PRODUCTION)
 
     .clientId(CONFIG_CLIENT_ID);
     
@@ -69,10 +67,13 @@ public class PaypalDonation extends Activity {
 	
 	public void onBuyPressed(View pressed) {
 		String amount = donationAmt.getText().toString();
-		if(!amount.equals("")){
-			Toast.makeText(this,  amount + " selected", Toast.LENGTH_LONG).show();
-			float amt = (float)Float.valueOf(amount);
-			if (amt < 1) {
+		if(!amount.equals("") && !amount.equals(".")){
+			//Toast.makeText(this,  amount + " selected", Toast.LENGTH_LONG).show();
+			//float amt = (float)Float.valueOf(amount);
+			float amt = Float.parseFloat(amount);
+			if(amt == Float.NaN) {
+				Toast.makeText(this,  "Please enter a valid number", Toast.LENGTH_LONG).show();
+			}else if (amt < 1) {
 				Toast.makeText(this,  "Please donate atleast $1.00", Toast.LENGTH_LONG).show();
 			} else{
 			    PayPalPayment payment = new PayPalPayment(new BigDecimal(amount), "USD", "Donate",PayPalPayment.PAYMENT_INTENT_SALE);
