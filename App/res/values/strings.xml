@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">C&amp;S Toolbox</string>
+    <string name="app_name">Sober Tool</string>
 
     <string-array name="drawer_array">
         <item>Search</item>
