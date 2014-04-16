@@ -8,6 +8,10 @@ import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.json.JSONTokener;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -26,7 +30,7 @@ public class SplashScreenActivity extends Activity {
 	private static int SPLASH_TIME_OUT = 1000;
 	String url = "http://www.cleanandsobertoolbox.com/";
 	String version = "version";
-	String stringURLArray[] = {"disclaimer.json", "psychology.json", "categories.json", "messages.json"};
+	String stringURLArray[] = {"disclaimer.json", "about.json", "categories.json", "messages.json", "help.json"};
 	
 	public static SharedPreferences navigationMessages = null;
 	
@@ -163,6 +167,25 @@ public class SplashScreenActivity extends Activity {
  			// will be set only once!
  			if (navigationMessages.getBoolean("updateCategories", false))
  				navigationMessages.edit().putBoolean("updateDb", true).commit();
+ 		} else if (text.startsWith(url+stringURLArray[4])) {  //Help
+ 			int urlLength = (url+stringURLArray[4]).length();
+ 			String helpJson = text.substring(urlLength);
+ 			try {
+	 			JSONTokener tokener = new JSONTokener(helpJson);
+	            JSONObject root = new JSONObject(tokener);
+	            String response_help1 = root.getString("help1");
+	            String response_help2 = root.getString("help2");
+	            String response_help3 = root.getString("help3");
+	            
+	            navigationMessages.edit().putString(HelpDialogFragment.HELP+'0', response_help1).commit();
+	            navigationMessages.edit().putString(HelpDialogFragment.HELP+'1', response_help2).commit();
+	            navigationMessages.edit().putString(HelpDialogFragment.HELP+'2', response_help3).commit();
+	            
+	            
+ 			} catch (JSONException e) {
+ 				 Log.e("paymentExample", "an extremely unlikely failure occurred: ", e);
+ 			}
+ 			//navigationMessages.edit().putString(NavigationMessageFragment.KEY+'0', text.substring(urlLength)).commit();
  		}
  	}
 
