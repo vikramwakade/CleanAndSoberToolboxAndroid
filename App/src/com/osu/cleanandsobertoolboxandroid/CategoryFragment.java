@@ -54,20 +54,21 @@ public class CategoryFragment extends ListFragment {
         	categories.add(c.getTitle());
         }
         
-        String type = CategoryList.get(0).getType();
-        if(type.equals("content")) {
-        	MainActivity.help_message_index.edit().putInt(MainActivity.HELP_INDEX, 2).commit();
-        } else if( type.equals("category")) {
-        	MainActivity.help_message_index.edit().putInt(MainActivity.HELP_INDEX, 1).commit();
+        if (!categories.isEmpty()) {
+	        String type = CategoryList.get(0).getType();
+	        if(type.equals("content")) {
+	        	MainActivity.help_message_index.edit().putInt(MainActivity.HELP_INDEX, 2).commit();
+	        } else if( type.equals("category")) {
+	        	MainActivity.help_message_index.edit().putInt(MainActivity.HELP_INDEX, 1).commit();
+	        }
+	        
+	        if(currentParentId == -1){
+	        	MainActivity.help_message_index.edit().putInt(MainActivity.HELP_INDEX, 0).commit();
+	        }
+	        
+	        // Create an array adapter for the list view
+        	setListAdapter(new ArrayAdapter<String>(getActivity(), R.layout.activity_list_layout, categories));
         }
-        
-        if(currentParentId == -1){
-        	MainActivity.help_message_index.edit().putInt(MainActivity.HELP_INDEX, 0).commit();
-        }
-        
-        // Create an array adapter for the list view
-        setListAdapter(new ArrayAdapter<String>(getActivity(), R.layout.activity_list_layout, categories));
-        
     }
 	
 	@Override
@@ -104,17 +105,20 @@ public class CategoryFragment extends ListFragment {
 	@Override
 	public void onResume() {
 		super.onResume();
-		String type = CategoryList.get(0).getType();
-        if(type.equals("content")) {
-        	MainActivity.help_message_index.edit().putInt(MainActivity.HELP_INDEX, 2).commit();
-        } else if( type.equals("category")) {
-        	MainActivity.help_message_index.edit().putInt(MainActivity.HELP_INDEX, 1).commit();
-        }
-        
-        if(currentParentId == -1){
-        	MainActivity.help_message_index.edit().putInt(MainActivity.HELP_INDEX, 0).commit();
-        }
-	
+		if (CategoryList != null) {
+			if (!CategoryList.isEmpty()) {
+				String type = CategoryList.get(0).getType();
+		        if(type.equals("content")) {
+		        	MainActivity.help_message_index.edit().putInt(MainActivity.HELP_INDEX, 2).commit();
+		        } else if( type.equals("category")) {
+		        	MainActivity.help_message_index.edit().putInt(MainActivity.HELP_INDEX, 1).commit();
+		        }
+		        
+		        if(currentParentId == -1){
+		        	MainActivity.help_message_index.edit().putInt(MainActivity.HELP_INDEX, 0).commit();
+		        }
+			}
+		}
 	}
 	
 	@Override

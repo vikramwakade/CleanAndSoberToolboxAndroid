@@ -57,7 +57,7 @@ public class MainActivity extends FragmentActivity
     private AdView adView;
  
     /* Your ad unit id. Replace with your actual ad unit id. */
-    private static final String AD_UNIT_ID = "ca-app-pub-4425629879199780/5585658553";
+    private static final String AD_UNIT_ID = "ca-app-pub-2227834502563624/5633254399";
     public static final String HELP_INDEX = "INDEX";
     public static SharedPreferences help_message_index = null;
     

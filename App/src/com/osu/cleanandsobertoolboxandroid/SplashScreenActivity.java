@@ -28,7 +28,7 @@ public class SplashScreenActivity extends Activity {
 
 	//Splash screen timer
 	private static int SPLASH_TIME_OUT = 1000;
-	String url = "http://www.cleanandsobertoolbox.com/";
+	String url = "http://www.sobertool.com/";
 	String version = "version";
 	String stringURLArray[] = {"disclaimer.json", "about.json", "categories.json", "messages.json", "help.json"};
 	
