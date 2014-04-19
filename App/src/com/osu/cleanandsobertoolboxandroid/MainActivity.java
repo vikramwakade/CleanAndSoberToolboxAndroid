@@ -210,7 +210,7 @@ public class MainActivity extends FragmentActivity
 			prefs.edit().putBoolean("firstrunnotes", true).commit();
 			
 			//Go ahead and schedule daily notifications
-//Go ahead and schedule the notifications initially
+
     		
     		Calendar calendar = Calendar.getInstance();
 			calendar.setTimeInMillis(System.currentTimeMillis());
