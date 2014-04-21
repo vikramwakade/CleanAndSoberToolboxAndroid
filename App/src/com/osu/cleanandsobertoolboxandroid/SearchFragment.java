@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.app.Activity;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.view.Menu;
@@ -61,6 +62,16 @@ public class SearchFragment extends ListFragment {
         if( search != null)
         	search.setVisible(false);
     }
+	
+	@Override
+	public void onActivityCreated (Bundle savedInstanceState) {
+		super.onActivityCreated(savedInstanceState);
+		
+		//Make list have dividers
+		ListView list = this.getListView();
+        list.setDivider(new ColorDrawable(0xFF000000));
+        list.setDividerHeight(1);
+	}
 	
 	@Override
 	public void onAttach(Activity activity) {
